@@ -142,6 +142,20 @@ describe("selectNode", () => {
     useGraphStore.getState().selectNode("src/index.ts");
     expect(useGraphStore.getState().focusRequestId).toBeNull();
   });
+
+  it("clears maxDepth when deselecting (null)", () => {
+    useGraphStore.getState().updateFilters({ maxDepth: 3 });
+    useGraphStore.getState().selectNode("src/index.ts");
+    useGraphStore.getState().selectNode(null);
+    expect(useGraphStore.getState().filters.maxDepth).toBeNull();
+  });
+
+  it("preserves maxDepth when selecting a different node", () => {
+    useGraphStore.getState().updateFilters({ maxDepth: 2 });
+    useGraphStore.getState().selectNode("src/index.ts");
+    useGraphStore.getState().selectNode("src/utils.ts");
+    expect(useGraphStore.getState().filters.maxDepth).toBe(2);
+  });
 });
 
 describe("focusNode", () => {
