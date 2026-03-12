@@ -37,7 +37,7 @@ export function ControlsBar() {
       {/* Open folder */}
       <button
         onClick={handleOpenFolder}
-        className="flex items-center gap-1.5 rounded border border-border bg-bg-elevated px-3 py-1.5 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-accent-cyan hover:text-accent-cyan glow-cyan"
+        className="flex items-center gap-1.5 rounded border border-border bg-bg-elevated px-3 py-1.5 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-accent-primary hover:text-accent-primary"
       >
         <svg
           width="14"
@@ -65,7 +65,7 @@ export function ControlsBar() {
             onClick={() => setLayout(l)}
             className={`px-2.5 py-1 font-mono text-xs capitalize transition-all duration-300 ${
               layout === l
-                ? "bg-bg-elevated text-accent-cyan"
+                ? "bg-bg-elevated text-accent-primary"
                 : "text-text-muted hover:text-text-secondary"
             } ${l === "force" ? "rounded-l" : ""} ${l === "circle" ? "rounded-r" : ""}`}
           >
@@ -96,7 +96,7 @@ export function ControlsBar() {
         <input
           type="text"
           placeholder="Search files..."
-          className="w-full rounded border border-border bg-bg-primary py-1.5 pr-2 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-cyan"
+          className="w-full rounded border border-border bg-bg-primary py-1.5 pr-2 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-primary"
         />
       </div>
 

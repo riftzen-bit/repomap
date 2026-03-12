@@ -5,10 +5,10 @@ export function ErrorState() {
   const reset = useGraphStore((s) => s.reset);
 
   return (
-    <div className="flex h-full w-full items-center justify-center dot-grid">
-      <div className="flex w-96 flex-col items-center gap-6">
+    <div className="flex h-full w-full items-center justify-center grain-bg">
+      <div className="relative z-10 flex w-96 flex-col items-center gap-6">
         {/* Icon */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent-red/30 bg-accent-red/5">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent-danger/30 bg-accent-danger/5">
           <svg
             width="24"
             height="24"
@@ -18,7 +18,7 @@ export function ErrorState() {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-accent-red"
+            className="text-accent-danger"
           >
             <circle cx="12" cy="12" r="10" />
             <line x1="15" y1="9" x2="9" y2="15" />
@@ -28,7 +28,7 @@ export function ErrorState() {
 
         {/* Message */}
         <div className="flex flex-col items-center gap-2 text-center">
-          <h2 className="font-mono text-sm font-semibold text-accent-red">
+          <h2 className="font-mono text-sm font-semibold text-accent-danger">
             Scan Failed
           </h2>
           <p className="font-mono text-xs leading-relaxed text-text-secondary">

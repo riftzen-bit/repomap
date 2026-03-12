@@ -24,22 +24,26 @@ export function EmptyState() {
   }
 
   return (
-    <div className="flex h-full w-full items-center justify-center dot-grid">
-      <div className="flex flex-col items-center gap-8">
+    <div className="flex h-full w-full items-center justify-center grain-bg">
+      <div className="relative z-10 flex flex-col items-center gap-8">
         {/* Logo / heading */}
         <div className="flex flex-col items-center gap-3">
-          <h1 className="font-mono text-5xl font-bold tracking-tight text-accent-cyan text-glow-cyan">
+          <h1 className="font-mono text-4xl font-light tracking-[-0.02em] text-accent-primary">
             RepoMap
           </h1>
-          <p className="font-sans text-sm font-light tracking-wide text-text-secondary">
-            See your code. Understand your architecture.
-          </p>
+          <div className="flex items-center gap-4">
+            <span className="h-px w-8 bg-border" />
+            <p className="font-sans text-sm font-light tracking-wide text-text-secondary">
+              See your code. Understand your architecture.
+            </p>
+            <span className="h-px w-8 bg-border" />
+          </div>
         </div>
 
         {/* Open button */}
         <button
           onClick={handleOpen}
-          className="group relative rounded border border-accent-cyan/30 bg-accent-cyan/5 px-6 py-3 font-mono text-sm text-accent-cyan transition-all duration-300 hover:border-accent-cyan/60 hover:bg-accent-cyan/10 glow-cyan"
+          className="group relative rounded border border-accent-primary/30 bg-accent-primary/5 px-6 py-3 font-mono text-sm text-accent-primary transition-all duration-300 hover:border-accent-primary/60 hover:bg-accent-primary/10"
         >
           <span className="flex items-center gap-2">
             <svg

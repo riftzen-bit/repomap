@@ -30,7 +30,7 @@ export function GraphCanvas() {
 
   if (!graphData) {
     return (
-      <div className="dot-grid flex flex-1 items-center justify-center">
+      <div className="grain-bg flex flex-1 items-center justify-center">
         <span className="font-mono text-xs text-text-muted">
           No graph data
         </span>
@@ -39,7 +39,7 @@ export function GraphCanvas() {
   }
 
   return (
-    <div className="dot-grid relative flex-1">
+    <div className="grain-bg relative flex-1">
       <div ref={containerRef} className="h-full w-full" />
       <GraphControls
         onZoomIn={zoomIn}

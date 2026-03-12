@@ -100,7 +100,7 @@ function ConnectionSection({
               key={entry.node.id}
               onClick={() => onSelect(entry.node.id)}
               className={`group flex w-full items-center gap-2 rounded px-2 py-1 text-left transition-colors duration-200 hover:bg-bg-elevated ${
-                entry.isCircular ? "ring-1 ring-accent-red/30" : ""
+                entry.isCircular ? "ring-1 ring-accent-danger/30" : ""
               }`}
             >
               {/* File icon colored by language */}
@@ -123,7 +123,7 @@ function ConnectionSection({
               </span>
 
               {entry.isCircular && (
-                <span className="ml-auto shrink-0 font-mono text-[9px] text-accent-red">
+                <span className="ml-auto shrink-0 font-mono text-[9px] text-accent-danger">
                   circular
                 </span>
               )}

@@ -2,18 +2,18 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg-primary: #0a0a0f;
-  --color-bg-secondary: #12121a;
-  --color-bg-elevated: #1a1a26;
-  --color-border: #2a2a3a;
-  --color-text-primary: #e0e0e8;
-  --color-text-secondary: #7a7a8e;
-  --color-text-muted: #4a4a5e;
-  --color-accent-cyan: #00d4ff;
-  --color-accent-green: #00ff88;
-  --color-accent-amber: #ffaa00;
-  --color-accent-red: #ff3355;
-  --color-accent-purple: #aa66ff;
+  --color-bg-primary: #1a1714;
+  --color-bg-secondary: #211e19;
+  --color-bg-elevated: #2a2620;
+  --color-border: #3d362d;
+  --color-text-primary: #e8e0d4;
+  --color-text-secondary: #a89f93;
+  --color-text-muted: #6b6158;
+  --color-accent-primary: #d4915c;
+  --color-accent-secondary: #7bae7f;
+  --color-accent-warning: #c9a84c;
+  --color-accent-danger: #c45c5c;
+  --color-accent-info: #6b9ec4;
 
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
@@ -41,19 +41,23 @@ body,
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent-cyan) 30%, transparent);
+  background: color-mix(in srgb, var(--color-accent-primary) 30%, transparent);
   color: var(--color-text-primary);
 }
 
-/* ---- Dot-grid background ---- */
+/* ---- Grain texture background ---- */
 
-.dot-grid {
-  background-image: radial-gradient(
-    circle,
-    var(--color-border) 1px,
-    transparent 1px
-  );
-  background-size: 24px 24px;
+.grain-bg {
+  position: relative;
+}
+
+.grain-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ---- Scrollbar ---- */
@@ -76,26 +80,10 @@ body,
   background: var(--color-text-muted);
 }
 
-/* ---- Glow effects ---- */
+/* ---- Subtle warm elevation ---- */
 
-.glow-cyan {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent-cyan) 25%, transparent);
-}
-
-.glow-green {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent-green) 25%, transparent);
-}
-
-.glow-red {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent-red) 25%, transparent);
-}
-
-.glow-amber {
-  box-shadow: 0 0 12px color-mix(in srgb, var(--color-accent-amber) 25%, transparent);
-}
-
-.text-glow-cyan {
-  text-shadow: 0 0 8px color-mix(in srgb, var(--color-accent-cyan) 40%, transparent);
+.warm-elevated {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px var(--color-border);
 }
 
 /* ---- Animations ---- */
@@ -105,7 +93,7 @@ body,
   50% { opacity: 0.6; }
 }
 
-@keyframes scan-bar {
+@keyframes sweep {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
@@ -114,6 +102,6 @@ body,
   animation: pulse-slow 2s ease-in-out infinite;
 }
 
-.animate-scan-bar {
-  animation: scan-bar 1.5s ease-in-out infinite;
+.animate-sweep {
+  animation: sweep 1.5s ease-in-out infinite;
 }
