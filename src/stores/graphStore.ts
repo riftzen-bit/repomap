@@ -11,6 +11,8 @@ export interface GraphStore {
   scanProgress: { filesScanned: number; totalFiles: number } | null;
   errorMessage: string | null;
   filters: Filters;
+  impactMode: boolean;
+  clusteringEnabled: boolean;
 
   setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
@@ -20,6 +22,8 @@ export interface GraphStore {
   updateScanProgress: (progress: GraphStore["scanProgress"]) => void;
   setError: (message: string) => void;
   updateFilters: (filters: Partial<Filters>) => void;
+  setImpactMode: (enabled: boolean) => void;
+  setClusteringEnabled: (enabled: boolean) => void;
   reset: () => void;
 }
 
@@ -38,6 +42,8 @@ const initialState = {
     minConnections: 0,
     maxDepth: null,
   },
+  impactMode: false,
+  clusteringEnabled: false,
 };
 
 export const useGraphStore = create<GraphStore>()((set) => ({
@@ -48,14 +54,25 @@ export const useGraphStore = create<GraphStore>()((set) => ({
 
   selectNode: (id) =>
     set((state) =>
-      id === null && state.filters.maxDepth !== null
-        ? { selectedNodeId: null, filters: { ...state.filters, maxDepth: null } }
+      id === null
+        ? {
+            selectedNodeId: null,
+            impactMode: false,
+            filters:
+              state.filters.maxDepth !== null
+                ? { ...state.filters, maxDepth: null }
+                : state.filters,
+          }
         : { selectedNodeId: id },
     ),
 
   focusNode: (id) => set({ selectedNodeId: id, focusRequestId: id }),
 
-  setLayout: (layout) => set({ layout }),
+  setLayout: (layout) =>
+    set((state) => ({
+      layout,
+      clusteringEnabled: layout === "force" ? state.clusteringEnabled : false,
+    })),
 
   setScanStatus: (status) => set({ scanStatus: status }),
 
@@ -68,6 +85,10 @@ export const useGraphStore = create<GraphStore>()((set) => ({
     set((state) => ({
       filters: { ...state.filters, ...filters },
     })),
+
+  setImpactMode: (enabled) => set({ impactMode: enabled }),
+
+  setClusteringEnabled: (enabled) => set({ clusteringEnabled: enabled }),
 
   reset: () => set(initialState),
 }));
