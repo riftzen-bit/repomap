@@ -47,6 +47,12 @@ export function useKeyboardShortcuts({
             e.preventDefault();
             useGraphStore.getState().setLayout("circle");
             return;
+          case "d": {
+            e.preventDefault();
+            const { selectedNodeId, toggleBookmark } = useGraphStore.getState();
+            if (selectedNodeId) toggleBookmark(selectedNodeId);
+            return;
+          }
           case "f": {
             e.preventDefault();
             const searchInput = document.querySelector<HTMLInputElement>(

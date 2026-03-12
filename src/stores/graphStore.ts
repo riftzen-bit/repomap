@@ -56,11 +56,33 @@ const initialState = {
   bookmarks: [] as string[],
 };
 
+function bookmarkKey(root: string | null): string {
+  const normalized = (root ?? "").replace(/\/+$/, "");
+  return `repomap:bookmarks:${normalized}`;
+}
+
+function persistBookmarks(bookmarks: string[], root: string | null) {
+  try {
+    localStorage.setItem(bookmarkKey(root), JSON.stringify(bookmarks));
+  } catch {
+    // localStorage unavailable or full — ignore
+  }
+}
+
+function loadBookmarks(root: string | null): string[] {
+  try {
+    const stored = localStorage.getItem(bookmarkKey(root));
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
 export const useGraphStore = create<GraphStore>()((set) => ({
   ...initialState,
 
   setGraphData: (data, projectRoot) =>
-    set({ graphData: data, projectRoot, scanStatus: "complete", errorMessage: null }),
+    set({ graphData: data, projectRoot, scanStatus: "complete", errorMessage: null, bookmarks: loadBookmarks(projectRoot) }),
 
   selectNode: (id) =>
     set((state) =>
@@ -114,12 +136,18 @@ export const useGraphStore = create<GraphStore>()((set) => ({
   setHeatmapData: (data) => set({ heatmapData: data }),
 
   toggleBookmark: (nodeId) =>
-    set((state) => ({
-      bookmarks: state.bookmarks.includes(nodeId)
+    set((state) => {
+      const next = state.bookmarks.includes(nodeId)
         ? state.bookmarks.filter((id) => id !== nodeId)
-        : [...state.bookmarks, nodeId],
-    })),
-  clearBookmarks: () => set({ bookmarks: [] }),
+        : [...state.bookmarks, nodeId];
+      persistBookmarks(next, state.projectRoot);
+      return { bookmarks: next };
+    }),
+  clearBookmarks: () =>
+    set((state) => {
+      persistBookmarks([], state.projectRoot);
+      return { bookmarks: [] };
+    }),
 
   reset: () => set(initialState),
 }));
