@@ -5,3 +5,19 @@ src-tauri/target/
 src-tauri/gen/
 .DS_Store
 *.log
+
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# IDE & tools
+.claude/
+.idea/
+.vscode/
+*.swp
+*.swo
