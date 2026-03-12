@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import cytoscape from "cytoscape";
 import fcose from "cytoscape-fcose";
 import dagre from "cytoscape-dagre";
-import type { GraphData } from "../../lib/types";
+import type { GraphData, Filters } from "../../lib/types";
 import {
   buildCytoscapeElements,
   cytoscapeStylesheet,
@@ -17,13 +17,6 @@ function registerExtensions() {
   cytoscape.use(fcose as cytoscape.Ext);
   cytoscape.use(dagre as cytoscape.Ext);
   extensionsRegistered = true;
-}
-
-interface Filters {
-  languages: string[];
-  directories: string[];
-  minConnections: number;
-  maxDepth: number | null;
 }
 
 interface ContextMenuEvent {
