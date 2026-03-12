@@ -13,6 +13,7 @@ export function ControlsBar() {
   const filters = useGraphStore((s) => s.filters);
   const updateFilters = useGraphStore((s) => s.updateFilters);
   const projectRoot = useGraphStore((s) => s.projectRoot);
+  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const { startScan } = useScanner();
 
   const languages = graphData
@@ -104,6 +105,32 @@ export function ControlsBar() {
             {l}
           </button>
         ))}
+      </div>
+
+      {/* Divider */}
+      <div className="h-5 w-px bg-border" />
+
+      {/* Depth slider */}
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-[10px] text-text-muted whitespace-nowrap">
+          Depth
+        </span>
+        <input
+          type="range"
+          min="0"
+          max="5"
+          value={filters.maxDepth ?? 0}
+          onChange={(e) => {
+            const val = parseInt(e.target.value, 10);
+            updateFilters({ maxDepth: val === 0 ? null : val });
+          }}
+          disabled={!selectedNodeId}
+          title={selectedNodeId ? `Depth: ${filters.maxDepth ?? "All"}` : "Select a node first"}
+          className="h-1 w-20 cursor-pointer appearance-none rounded bg-border accent-accent-primary disabled:cursor-not-allowed disabled:opacity-30"
+        />
+        <span className="font-mono text-[10px] text-text-secondary w-4 text-center">
+          {filters.maxDepth ?? "∞"}
+        </span>
       </div>
 
       {/* Divider */}

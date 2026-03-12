@@ -5,6 +5,7 @@ interface Filters {
   languages: string[];
   directories: string[];
   minConnections: number;
+  maxDepth: number | null;
 }
 
 export interface GraphStore {
@@ -42,6 +43,7 @@ const initialState = {
     languages: [],
     directories: [],
     minConnections: 0,
+    maxDepth: null,
   },
 };
 

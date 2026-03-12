@@ -8,6 +8,7 @@ import {
   cytoscapeStylesheet,
   getLayoutConfig,
 } from "../../lib/cytoscape-config";
+import { getNodesWithinDepth } from "../../lib/graph-utils";
 
 // Register extensions exactly once
 let extensionsRegistered = false;
@@ -22,6 +23,7 @@ interface Filters {
   languages: string[];
   directories: string[];
   minConnections: number;
+  maxDepth: number | null;
 }
 
 interface ContextMenuEvent {
@@ -149,7 +151,7 @@ export function useGraph(
     cy.elements().remove();
     cy.add(elements);
 
-    applyFilters(cy, filters);
+    applyFilters(cy, filters, graphData, selectedNodeId);
 
     const layoutConfig = getLayoutConfig(layout);
     cy.layout(layoutConfig as cytoscape.LayoutOptions).run();
@@ -175,8 +177,15 @@ export function useGraph(
     if (!cy || !graphData || prevFiltersRef.current === filters) return;
     prevFiltersRef.current = filters;
 
-    applyFilters(cy, filters);
+    applyFilters(cy, filters, graphData, selectedNodeId);
   }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Re-apply depth filter when selected node changes and maxDepth is active
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy || !graphData || filters.maxDepth === null) return;
+    applyFilters(cy, filters, graphData, selectedNodeId);
+  }, [selectedNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // React to node selection
   useEffect(() => {
@@ -300,18 +309,28 @@ export function useGraph(
   };
 }
 
-function applyFilters(cy: cytoscape.Core, filters: Filters) {
+function applyFilters(
+  cy: cytoscape.Core,
+  filters: Filters,
+  graphData: GraphData | null,
+  selectedNodeId: string | null,
+) {
+  // Pre-compute depth-visible set if maxDepth is active
+  let depthVisibleSet: Set<string> | null = null;
+  if (filters.maxDepth !== null && selectedNodeId && graphData) {
+    depthVisibleSet = getNodesWithinDepth(selectedNodeId, graphData.edges, filters.maxDepth);
+  }
+
   cy.nodes().forEach((node) => {
     const language = node.data("language") as string;
     const connectedEdges = node.connectedEdges().length;
+    const nodeId = node.id();
 
     let visible = true;
 
-    // Language filter: if languages are specified, hide non-matching
-    if (filters.languages.length > 0) {
-      if (!filters.languages.includes(language)) {
-        visible = false;
-      }
+    // Language filter
+    if (filters.languages.length > 0 && !filters.languages.includes(language)) {
+      visible = false;
     }
 
     // Directory filter
@@ -328,21 +347,19 @@ function applyFilters(cy: cytoscape.Core, filters: Filters) {
       visible = false;
     }
 
-    if (visible) {
-      node.style("display", "element");
-    } else {
-      node.style("display", "none");
+    // Depth filter (intersection with other filters)
+    if (depthVisibleSet && !depthVisibleSet.has(nodeId)) {
+      visible = false;
     }
+
+    node.style("display", visible ? "element" : "none");
   });
 
   // Hide edges whose source or target is hidden
   cy.edges().forEach((edge) => {
     const src = edge.source();
     const tgt = edge.target();
-    if (
-      src.style("display") === "none" ||
-      tgt.style("display") === "none"
-    ) {
+    if (src.style("display") === "none" || tgt.style("display") === "none") {
       edge.style("display", "none");
     } else {
       edge.style("display", "element");

@@ -9,7 +9,8 @@ export function InsightsBar() {
   const filtersActive =
     filters.languages.length > 0 ||
     filters.directories.length > 0 ||
-    filters.minConnections > 0;
+    filters.minConnections > 0 ||
+    filters.maxDepth !== null;
 
   const visibleCount = useMemo(() => {
     if (!graphData || !filtersActive) return 0;
