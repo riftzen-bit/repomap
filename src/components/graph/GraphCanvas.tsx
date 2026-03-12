@@ -89,7 +89,7 @@ export function GraphCanvas() {
         onExportJson={exportJson}
         onExportMermaid={exportMermaid}
       />
-      <GraphMinimap cy={cy} />
+      <GraphMinimap cy={cy} graphReady={!!graphData} />
       {exportError && (
         <div className="absolute top-4 left-1/2 z-40 -translate-x-1/2 rounded border border-accent-danger/30 bg-accent-danger/10 px-4 py-2 font-mono text-xs text-accent-danger shadow-lg">
           {exportError}

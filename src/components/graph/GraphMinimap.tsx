@@ -3,6 +3,8 @@ import type cytoscape from "cytoscape";
 
 interface GraphMinimapProps {
   cy: React.RefObject<cytoscape.Core | null>;
+  /** Pass graphData so the effect re-runs after cy is populated */
+  graphReady: boolean;
 }
 
 const MAP_W = 160;
@@ -11,7 +13,7 @@ const PADDING = 10;
 const NODE_RADIUS = 2;
 const REDRAW_INTERVAL = 33; // ~30fps
 
-export function GraphMinimap({ cy }: GraphMinimapProps) {
+export function GraphMinimap({ cy, graphReady }: GraphMinimapProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(true);
   const draggingRef = useRef(false);
@@ -106,37 +108,56 @@ export function GraphMinimap({ cy }: GraphMinimapProps) {
     }, REDRAW_INTERVAL);
   }, [draw]);
 
-  // Attach cytoscape listeners
+  // Attach cytoscape listeners — retry until cy is available
+  const attachedRef = useRef(false);
   useEffect(() => {
-    const cyInst = cy.current;
-    if (!cyInst) return;
+    attachedRef.current = false;
 
-    const handler = () => scheduleDraw();
+    function tryAttach() {
+      const cyInst = cy.current;
+      if (!cyInst) {
+        // cy not ready yet — retry next frame
+        retryRef.current = requestAnimationFrame(tryAttach);
+        return;
+      }
 
-    cyInst.on("viewport", handler);
-    cyInst.on("position", handler);
-    cyInst.on("add", handler);
-    cyInst.on("remove", handler);
-    cyInst.on("style", handler);
-    cyInst.on("layoutstop", handler);
+      attachedRef.current = true;
+      const handler = () => scheduleDraw();
 
-    // Initial draw
-    draw();
+      cyInst.on("viewport", handler);
+      cyInst.on("position", handler);
+      cyInst.on("add", handler);
+      cyInst.on("remove", handler);
+      cyInst.on("style", handler);
+      cyInst.on("layoutstop", handler);
+
+      // Initial draw after a short delay so layout has time to run
+      setTimeout(draw, 100);
+
+      cleanupFnRef.current = () => {
+        cyInst.off("viewport", handler);
+        cyInst.off("position", handler);
+        cyInst.off("add", handler);
+        cyInst.off("remove", handler);
+        cyInst.off("style", handler);
+        cyInst.off("layoutstop", handler);
+      };
+    }
+
+    const retryRef = { current: 0 };
+    const cleanupFnRef = { current: () => {} };
+    tryAttach();
 
     return () => {
-      cyInst.off("viewport", handler);
-      cyInst.off("position", handler);
-      cyInst.off("add", handler);
-      cyInst.off("remove", handler);
-      cyInst.off("style", handler);
-      cyInst.off("layoutstop", handler);
+      cancelAnimationFrame(retryRef.current);
+      cleanupFnRef.current();
 
       if (redrawTimerRef.current !== null) {
         clearTimeout(redrawTimerRef.current);
         redrawTimerRef.current = null;
       }
     };
-  }, [cy, draw, scheduleDraw]);
+  }, [cy, draw, scheduleDraw, graphReady]);
 
   // Pan graph when clicking/dragging on minimap
   const panToMinimapCoords = useCallback(
