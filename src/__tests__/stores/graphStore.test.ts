@@ -464,3 +464,59 @@ describe("reset", () => {
     });
   });
 });
+
+describe("impactMode", () => {
+  it("defaults to false", () => {
+    const { impactMode } = useGraphStore.getState();
+    expect(impactMode).toBe(false);
+  });
+
+  it("toggles impact mode", () => {
+    useGraphStore.getState().setImpactMode(true);
+    expect(useGraphStore.getState().impactMode).toBe(true);
+
+    useGraphStore.getState().setImpactMode(false);
+    expect(useGraphStore.getState().impactMode).toBe(false);
+  });
+
+  it("resets impactMode when node is deselected", () => {
+    useGraphStore.getState().setImpactMode(true);
+    useGraphStore.getState().selectNode(null);
+    expect(useGraphStore.getState().impactMode).toBe(false);
+  });
+
+  it("resets impactMode on full reset", () => {
+    useGraphStore.getState().setImpactMode(true);
+    useGraphStore.getState().reset();
+    expect(useGraphStore.getState().impactMode).toBe(false);
+  });
+});
+
+describe("clusteringEnabled", () => {
+  it("defaults to false", () => {
+    expect(useGraphStore.getState().clusteringEnabled).toBe(false);
+  });
+
+  it("toggles clustering", () => {
+    useGraphStore.getState().setClusteringEnabled(true);
+    expect(useGraphStore.getState().clusteringEnabled).toBe(true);
+  });
+
+  it("resets clustering on layout change to non-force", () => {
+    useGraphStore.getState().setClusteringEnabled(true);
+    useGraphStore.getState().setLayout("tree");
+    expect(useGraphStore.getState().clusteringEnabled).toBe(false);
+  });
+
+  it("preserves clustering when switching to force layout", () => {
+    useGraphStore.getState().setClusteringEnabled(true);
+    useGraphStore.getState().setLayout("force");
+    expect(useGraphStore.getState().clusteringEnabled).toBe(true);
+  });
+
+  it("resets on full reset", () => {
+    useGraphStore.getState().setClusteringEnabled(true);
+    useGraphStore.getState().reset();
+    expect(useGraphStore.getState().clusteringEnabled).toBe(false);
+  });
+});
