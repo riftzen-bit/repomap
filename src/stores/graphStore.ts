@@ -1,12 +1,5 @@
 import { create } from "zustand";
-import type { GraphData } from "../lib/types";
-
-interface Filters {
-  languages: string[];
-  directories: string[];
-  minConnections: number;
-  maxDepth: number | null;
-}
+import type { GraphData, Filters } from "../lib/types";
 
 export interface GraphStore {
   graphData: GraphData | null;

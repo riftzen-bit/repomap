@@ -58,3 +58,10 @@ export interface FilePreview {
   language: string;
   lineCount: number;
 }
+
+export interface Filters {
+  languages: string[];
+  directories: string[];
+  minConnections: number;
+  maxDepth: number | null;
+}
