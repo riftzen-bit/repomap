@@ -56,6 +56,7 @@ export function useGraph(
   clusteringEnabled: boolean,
   heatmapMode: boolean,
   heatmapData: Record<string, number> | null,
+  bookmarks: string[],
   onSelectNode: (id: string | null) => void,
 ): UseGraphResult {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -279,6 +280,20 @@ export function useGraph(
       }
     });
   }, [heatmapMode, heatmapData]);
+
+  // Apply bookmark CSS class to Cytoscape nodes
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    cy.nodes().forEach((node) => {
+      if (bookmarks.includes(node.id())) {
+        node.addClass("bookmarked");
+      } else {
+        node.removeClass("bookmarked");
+      }
+    });
+  }, [bookmarks, graphData]);
 
   const zoomIn = useCallback(() => {
     const cy = cyRef.current;

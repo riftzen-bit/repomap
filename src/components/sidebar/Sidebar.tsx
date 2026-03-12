@@ -5,6 +5,7 @@ import { CodePreview } from "./CodePreview";
 import { ConnectionList } from "./ConnectionList";
 import { DirectoryFilter } from "../filters/DirectoryFilter";
 import { ProjectOverview } from "./ProjectOverview";
+import { BookmarkList } from "./BookmarkList";
 
 export function Sidebar() {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
@@ -71,6 +72,7 @@ export function Sidebar() {
         </>
       ) : (
         <div className="flex h-full flex-col gap-4 overflow-y-auto px-3 py-3">
+          <BookmarkList />
           <ProjectOverview />
           <div className="border-t border-border pt-3">
             <DirectoryFilter />

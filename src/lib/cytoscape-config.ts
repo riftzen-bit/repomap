@@ -300,6 +300,14 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
     } as cytoscape.Css.Node,
   },
   {
+    selector: "node.bookmarked",
+    style: {
+      "border-color": "#c9a84c",
+      "border-width": 3,
+      "border-style": "double",
+    } as cytoscape.Css.Node,
+  },
+  {
     selector: "node.search-match",
     style: {
       "border-color": "#c9a84c",

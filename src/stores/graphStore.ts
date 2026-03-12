@@ -15,6 +15,7 @@ export interface GraphStore {
   clusteringEnabled: boolean;
   heatmapMode: boolean;
   heatmapData: Record<string, number> | null;
+  bookmarks: string[];
 
   setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
@@ -28,6 +29,8 @@ export interface GraphStore {
   setClusteringEnabled: (enabled: boolean) => void;
   setHeatmapMode: (enabled: boolean) => void;
   setHeatmapData: (data: Record<string, number>) => void;
+  toggleBookmark: (nodeId: string) => void;
+  clearBookmarks: () => void;
   reset: () => void;
 }
 
@@ -50,6 +53,7 @@ const initialState = {
   clusteringEnabled: false,
   heatmapMode: false,
   heatmapData: null,
+  bookmarks: [] as string[],
 };
 
 export const useGraphStore = create<GraphStore>()((set) => ({
@@ -108,6 +112,14 @@ export const useGraphStore = create<GraphStore>()((set) => ({
     })),
 
   setHeatmapData: (data) => set({ heatmapData: data }),
+
+  toggleBookmark: (nodeId) =>
+    set((state) => ({
+      bookmarks: state.bookmarks.includes(nodeId)
+        ? state.bookmarks.filter((id) => id !== nodeId)
+        : [...state.bookmarks, nodeId],
+    })),
+  clearBookmarks: () => set({ bookmarks: [] }),
 
   reset: () => set(initialState),
 }));

@@ -11,6 +11,8 @@ interface NodeContextMenuProps {
   onHideNode: () => void;
   onShowOnlyConnected: () => void;
   onResetView: () => void;
+  onToggleBookmark: () => void;
+  isBookmarked: boolean;
 }
 
 interface MenuItem {
@@ -28,6 +30,8 @@ export function NodeContextMenu({
   onHideNode,
   onShowOnlyConnected,
   onResetView,
+  onToggleBookmark,
+  isBookmarked,
 }: NodeContextMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -69,6 +73,11 @@ export function NodeContextMenu({
   }, [onClose]);
 
   const items: MenuItem[] = [
+    {
+      label: isBookmarked ? "Remove Bookmark" : "Bookmark",
+      icon: <BookmarkIcon />,
+      action: onToggleBookmark,
+    },
     {
       label: "Copy file path",
       icon: <ClipboardIcon />,
@@ -201,6 +210,23 @@ function FilterIcon() {
       strokeLinejoin="round"
     >
       <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+    </svg>
+  );
+}
+
+function BookmarkIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
     </svg>
   );
 }

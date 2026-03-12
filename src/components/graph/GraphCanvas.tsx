@@ -21,6 +21,8 @@ export function GraphCanvas() {
   const clusteringEnabled = useGraphStore((s) => s.clusteringEnabled);
   const heatmapMode = useGraphStore((s) => s.heatmapMode);
   const heatmapData = useGraphStore((s) => s.heatmapData);
+  const bookmarks = useGraphStore((s) => s.bookmarks);
+  const toggleBookmark = useGraphStore((s) => s.toggleBookmark);
   const selectNode = useGraphStore((s) => s.selectNode);
 
   const onSelectNode = useCallback(
@@ -41,7 +43,7 @@ export function GraphCanvas() {
     showOnlyConnected,
     resetView,
     setOnContextMenu,
-  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, heatmapMode, heatmapData, onSelectNode);
+  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, heatmapMode, heatmapData, bookmarks, onSelectNode);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
 
@@ -121,6 +123,8 @@ export function GraphCanvas() {
           onHideNode={() => hideNode(contextMenu.nodeId)}
           onShowOnlyConnected={() => showOnlyConnected(contextMenu.nodeId)}
           onResetView={resetView}
+          onToggleBookmark={() => toggleBookmark(contextMenu.nodeId)}
+          isBookmarked={bookmarks.includes(contextMenu.nodeId)}
         />
       )}
     </div>
