@@ -3,6 +3,7 @@ use std::path::Path;
 
 const IGNORED_DIRS: &[&str] = &[
     ".git",
+    ".repomap-cache",
     "node_modules",
     "vendor",
     "target",

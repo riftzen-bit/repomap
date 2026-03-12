@@ -1,10 +1,12 @@
 use std::fs;
 use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Mutex;
 
 use rayon::prelude::*;
 use tauri::Emitter;
 
+use crate::cache::{self, CachedParseResult, FileCache};
 use crate::graph::types::{FilePreview, Node, ScanProgress};
 use crate::graph::GraphBuilder;
 use crate::parser;
@@ -37,7 +39,16 @@ pub async fn scan_project(
         return Err("No recognized source files found".to_string());
     }
 
-    // Step 2: Parse files in parallel with rayon
+    // Set up file cache
+    let canon_root = root
+        .canonicalize()
+        .unwrap_or_else(|_| root.to_path_buf());
+    let file_cache = FileCache::new(&canon_root);
+    let mut cache_index = file_cache.load_index();
+    file_cache.gc(&mut cache_index, &canon_root);
+    let cache_index = Mutex::new(cache_index);
+
+    // Step 2: Parse files in parallel with rayon (with cache)
     let parsed: Vec<_> = files
         .par_iter()
         .filter_map(|scanned| {
@@ -68,7 +79,36 @@ pub async fn scan_project(
                 Err(_) => return None, // not valid UTF-8, skip
             };
 
+            // Check cache before parsing
+            let hash = cache::content_hash(content.as_bytes());
+            {
+                let idx = cache_index.lock().unwrap();
+                if let Some(cached) = file_cache.get(&scanned.relative_path, &hash, &idx) {
+                    // Cache hit: update index entry and return cached result
+                    drop(idx);
+                    let mut idx = cache_index.lock().unwrap();
+                    idx.entries.insert(scanned.relative_path.clone(), hash);
+                    let result = parser::ParseResult {
+                        symbols: cached.symbols,
+                        imports: cached.imports,
+                    };
+                    return Some((scanned.clone(), result));
+                }
+            }
+
+            // Cache miss: parse and store
             let result = parser::parse_file(&content, &scanned.language);
+
+            let cached = CachedParseResult {
+                symbols: result.symbols.clone(),
+                imports: result.imports.clone(),
+            };
+            let _ = file_cache.put(&scanned.relative_path, &hash, &cached);
+
+            {
+                let mut idx = cache_index.lock().unwrap();
+                idx.entries.insert(scanned.relative_path.clone(), hash);
+            }
 
             Some((scanned.clone(), result))
         })
@@ -79,6 +119,10 @@ pub async fn scan_project(
         let _ = window.emit("scan:error", "Scan cancelled");
         return Err("Scan cancelled".to_string());
     }
+
+    // Save updated cache index (best-effort, don't fail scan on cache errors)
+    let final_index = cache_index.into_inner().unwrap();
+    let _ = file_cache.save_index(&final_index);
 
     // Step 3: Build graph on main thread, emitting progress
     let mut builder = GraphBuilder::new();
