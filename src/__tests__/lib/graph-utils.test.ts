@@ -52,6 +52,11 @@ describe("getNodesWithinDepth", () => {
     expect(result).toEqual(new Set(["X", "Y", "Z"]));
   });
 
+  it("depth 0 returns only the start node", () => {
+    const result = getNodesWithinDepth("A", edges, 0);
+    expect(result).toEqual(new Set(["A"]));
+  });
+
   it("handles empty edge list", () => {
     const result = getNodesWithinDepth("A", [], 3);
     expect(result).toEqual(new Set(["A"]));

@@ -1,10 +1,12 @@
 import { useMemo } from "react";
 import { useGraphStore } from "../../stores/graphStore";
 import { getLanguageColor } from "../../lib/colors";
+import { getNodesWithinDepth } from "../../lib/graph-utils";
 
 export function InsightsBar() {
   const graphData = useGraphStore((s) => s.graphData);
   const filters = useGraphStore((s) => s.filters);
+  const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
 
   const filtersActive =
     filters.languages.length > 0 ||
@@ -27,6 +29,11 @@ export function InsightsBar() {
       );
     }
 
+    const depthSet =
+      filters.maxDepth !== null && selectedNodeId
+        ? getNodesWithinDepth(selectedNodeId, graphData.edges, filters.maxDepth)
+        : null;
+
     return graphData.nodes.filter((node) => {
       if (
         filters.languages.length > 0 &&
@@ -42,9 +49,11 @@ export function InsightsBar() {
       if ((connectionCounts.get(node.id) ?? 0) < filters.minConnections)
         return false;
 
+      if (depthSet && !depthSet.has(node.id)) return false;
+
       return true;
     }).length;
-  }, [graphData, filters, filtersActive]);
+  }, [graphData, filters, filtersActive, selectedNodeId]);
 
   if (!graphData) return null;
 

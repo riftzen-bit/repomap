@@ -53,7 +53,12 @@ export const useGraphStore = create<GraphStore>()((set) => ({
   setGraphData: (data, projectRoot) =>
     set({ graphData: data, projectRoot, scanStatus: "complete", errorMessage: null }),
 
-  selectNode: (id) => set({ selectedNodeId: id }),
+  selectNode: (id) =>
+    set((state) =>
+      id === null && state.filters.maxDepth !== null
+        ? { selectedNodeId: null, filters: { ...state.filters, maxDepth: null } }
+        : { selectedNodeId: id },
+    ),
 
   focusNode: (id) => set({ selectedNodeId: id, focusRequestId: id }),
 

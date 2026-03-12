@@ -180,13 +180,6 @@ export function useGraph(
     applyFilters(cy, filters, graphData, selectedNodeId);
   }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-apply depth filter when selected node changes and maxDepth is active
-  useEffect(() => {
-    const cy = cyRef.current;
-    if (!cy || !graphData || filters.maxDepth === null) return;
-    applyFilters(cy, filters, graphData, selectedNodeId);
-  }, [selectedNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
-
   // React to node selection
   useEffect(() => {
     const cy = cyRef.current;
