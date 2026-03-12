@@ -1,8 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
-import { codeToHtml } from "shiki";
 import { useGraphStore } from "../../stores/graphStore";
 import type { FilePreview } from "../../lib/types";
+
+// Lazy-load Shiki to reduce initial bundle size (~400KB savings)
+async function highlight(code: string, lang: string): Promise<string> {
+  const { codeToHtml } = await import("shiki");
+  return codeToHtml(code, { lang, theme: "vitesse-dark" });
+}
 
 interface CodePreviewProps {
   filePath: string;
@@ -48,10 +53,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
         setTotalLines(preview.lineCount);
 
         const lang = mapLanguage(preview.language || language);
-        const highlighted = await codeToHtml(preview.content, {
-          lang,
-          theme: "vitesse-dark",
-        });
+        const highlighted = await highlight(preview.content, lang);
 
         if (cancelled) return;
         setHtml(highlighted);
@@ -80,10 +82,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
       });
 
       const lang = mapLanguage(preview.language || language);
-      const highlighted = await codeToHtml(preview.content, {
-        lang,
-        theme: "vitesse-dark",
-      });
+      const highlighted = await highlight(preview.content, lang);
 
       setHtml(highlighted);
       setVisibleLines(nextVisible);
