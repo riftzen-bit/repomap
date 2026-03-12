@@ -17,6 +17,7 @@
     "dialog:allow-open",
     "dialog:allow-save",
     "fs:default",
+    "fs:write-all",
     "core:event:default"
   ]
 }
