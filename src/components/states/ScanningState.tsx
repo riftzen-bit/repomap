@@ -1,0 +1,46 @@
+import { useGraphStore } from "../../stores/graphStore";
+
+export function ScanningState() {
+  const scanProgress = useGraphStore((s) => s.scanProgress);
+
+  const filesScanned = scanProgress?.filesScanned ?? 0;
+  const totalFiles = scanProgress?.totalFiles ?? 0;
+  const percent = totalFiles > 0 ? (filesScanned / totalFiles) * 100 : 0;
+
+  return (
+    <div className="flex h-full w-full items-center justify-center dot-grid">
+      <div className="flex w-80 flex-col items-center gap-6">
+        {/* Pulsing label */}
+        <div className="flex items-center gap-2 animate-pulse-slow">
+          <span className="inline-block h-2 w-2 rounded-full bg-accent-cyan" />
+          <span className="font-mono text-sm text-accent-cyan text-glow-cyan">
+            Scanning
+          </span>
+        </div>
+
+        {/* Progress bar */}
+        <div className="w-full">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-bg-elevated">
+            {totalFiles > 0 ? (
+              <div
+                className="h-full rounded-full bg-accent-cyan transition-all duration-300 ease-out"
+                style={{ width: `${percent}%` }}
+              />
+            ) : (
+              <div className="h-full w-1/3 rounded-full bg-accent-cyan/60 animate-scan-bar" />
+            )}
+          </div>
+        </div>
+
+        {/* Counter */}
+        <div className="flex flex-col items-center gap-1">
+          <span className="font-mono text-xs text-text-secondary">
+            {totalFiles > 0
+              ? `${filesScanned} / ${totalFiles} files`
+              : "Discovering files..."}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
