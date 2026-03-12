@@ -1,5 +1,6 @@
 import { useGraphStore } from "../../stores/graphStore";
 import { getLanguageColor } from "../../lib/colors";
+import { HealthGauge } from "./HealthGauge";
 
 export function ProjectOverview() {
   const graphData = useGraphStore((s) => s.graphData);
@@ -23,6 +24,9 @@ export function ProjectOverview() {
           {graphData.edges.length} connections
         </div>
       </div>
+
+      {/* Health score */}
+      <HealthGauge insights={insights} />
 
       {/* Language breakdown */}
       <div>
