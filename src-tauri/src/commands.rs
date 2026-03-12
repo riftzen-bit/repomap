@@ -4,7 +4,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Mutex;
 
 use rayon::prelude::*;
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 
 use crate::cache::{self, CachedParseResult, FileCache};
 use crate::graph::types::{FilePreview, Node, ScanProgress};
@@ -17,7 +17,7 @@ static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
 pub async fn scan_project(
-    window: tauri::Window,
+    app: tauri::AppHandle,
     state: tauri::State<'_, GraphState>,
     path: String,
 ) -> Result<(), String> {
@@ -26,7 +26,7 @@ pub async fn scan_project(
     let root = Path::new(&path);
     if !root.is_dir() {
         let msg = format!("Not a valid directory: {path}");
-        let _ = window.emit("scan:error", &msg);
+        let _ = app.emit("scan:error", &msg);
         return Err(msg);
     }
 
@@ -35,7 +35,7 @@ pub async fn scan_project(
     let total = files.len() as u32;
 
     if total == 0 {
-        let _ = window.emit("scan:error", "No recognized source files found");
+        let _ = app.emit("scan:error", "No recognized source files found");
         return Err("No recognized source files found".to_string());
     }
 
@@ -116,7 +116,7 @@ pub async fn scan_project(
 
     // Check cancellation
     if CANCEL_FLAG.load(Ordering::Relaxed) {
-        let _ = window.emit("scan:error", "Scan cancelled");
+        let _ = app.emit("scan:error", "Scan cancelled");
         return Err("Scan cancelled".to_string());
     }
 
@@ -130,13 +130,13 @@ pub async fn scan_project(
 
     for (scanned, parse_result) in &parsed {
         if CANCEL_FLAG.load(Ordering::Relaxed) {
-            let _ = window.emit("scan:error", "Scan cancelled");
+            let _ = app.emit("scan:error", "Scan cancelled");
             return Err("Scan cancelled".to_string());
         }
 
         processed += 1;
 
-        let _ = window.emit(
+        let _ = app.emit(
             "scan:progress",
             ScanProgress {
                 files_scanned: processed,
@@ -184,8 +184,29 @@ pub async fn scan_project(
         let mut stored = state.lock().map_err(|e| format!("State lock error: {e}"))?;
         *stored = Some(graph.clone());
     }
-    let _ = window.emit("scan:complete", &graph);
+    let _ = app.emit("scan:complete", &graph);
 
+    // Auto-start file watcher after successful scan
+    let watcher_state = app.state::<crate::watcher::WatcherState>();
+    let _ = crate::watcher::start_watching(&path, app.clone(), &watcher_state);
+
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn start_file_watcher(
+    app: tauri::AppHandle,
+    watcher_state: tauri::State<'_, crate::watcher::WatcherState>,
+    path: String,
+) -> Result<(), String> {
+    crate::watcher::start_watching(&path, app, &watcher_state)
+}
+
+#[tauri::command]
+pub async fn stop_file_watcher(
+    watcher_state: tauri::State<'_, crate::watcher::WatcherState>,
+) -> Result<(), String> {
+    crate::watcher::stop_watching(&watcher_state);
     Ok(())
 }
 
