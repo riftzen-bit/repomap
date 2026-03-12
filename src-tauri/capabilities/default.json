@@ -15,6 +15,8 @@
     "core:window:allow-is-maximized",
     "dialog:default",
     "dialog:allow-open",
+    "dialog:allow-save",
+    "fs:default",
     "core:event:default"
   ]
 }

@@ -68,7 +68,7 @@ export function ControlsBar() {
       {/* Open folder */}
       <button
         onClick={handleOpenFolder}
-        className="flex items-center gap-1.5 rounded border border-border bg-bg-elevated px-3 py-1.5 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-accent-primary hover:text-accent-primary"
+        className="flex items-center gap-1.5 whitespace-nowrap rounded border border-border bg-bg-elevated px-3 py-1.5 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-accent-primary hover:text-accent-primary"
       >
         <svg
           width="14"
@@ -79,6 +79,7 @@ export function ControlsBar() {
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
+          className="shrink-0"
         >
           <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
         </svg>

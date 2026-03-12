@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from "react";
 import cytoscape from "cytoscape";
 import fcose from "cytoscape-fcose";
 import dagre from "cytoscape-dagre";
+import cytoscapeSvg from "cytoscape-svg";
 import type { GraphData, Filters } from "../../lib/types";
 import {
   buildCytoscapeElements,
@@ -22,6 +23,7 @@ function registerExtensions() {
   if (extensionsRegistered) return;
   cytoscape.use(fcose as cytoscape.Ext);
   cytoscape.use(dagre as cytoscape.Ext);
+  cytoscape.use(cytoscapeSvg as cytoscape.Ext);
   extensionsRegistered = true;
 }
 
@@ -104,15 +106,11 @@ export function useGraph(
       const container = containerRef.current;
       if (!container) return;
 
-      const containerRect = container.getBoundingClientRect();
       const renderedPos = node.renderedPosition();
 
-      const x = renderedPos.x + containerRect.left;
-      const y = renderedPos.y + containerRect.top;
-
       contextMenuCbRef.current?.({
-        x: x - containerRect.left,
-        y: y - containerRect.top,
+        x: renderedPos.x,
+        y: renderedPos.y,
         nodeId: node.id(),
         nodePath: (node.data("path") as string) ?? node.id(),
       });

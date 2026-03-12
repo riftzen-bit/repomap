@@ -9,3 +9,9 @@ declare module "cytoscape-dagre" {
   const dagre: cytoscape.Ext;
   export default dagre;
 }
+
+declare module "cytoscape-svg" {
+  import cytoscape from "cytoscape";
+  const svg: cytoscape.Ext;
+  export default svg;
+}

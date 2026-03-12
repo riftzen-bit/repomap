@@ -18,6 +18,7 @@ pub type GraphState = Mutex<Option<GraphData>>;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
         .manage(Mutex::new(None::<GraphData>))
         .manage(watcher::new_watcher_state())
         .invoke_handler(tauri::generate_handler![

@@ -25,9 +25,17 @@ pub fn start_watching(
                     event.kind,
                     EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)
                 );
-                if is_relevant {
-                    let _ = app_handle.emit("file-changed", ());
+                if !is_relevant {
+                    return;
                 }
+                // Ignore changes inside cache directory to prevent scan→cache→watch loop
+                let in_cache_dir = event.paths.iter().any(|p| {
+                    p.components().any(|c| c.as_os_str() == ".repomap-cache")
+                });
+                if in_cache_dir {
+                    return;
+                }
+                let _ = app_handle.emit("file-changed", ());
             }
         },
         notify::Config::default(),

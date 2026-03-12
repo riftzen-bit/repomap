@@ -2843,6 +2843,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",
+ "tauri-plugin-fs",
  "tree-sitter",
  "tree-sitter-cpp",
  "tree-sitter-go",

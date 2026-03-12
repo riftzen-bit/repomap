@@ -26,6 +26,9 @@ importers:
       cytoscape-fcose:
         specifier: ^2.2.0
         version: 2.2.0(cytoscape@3.33.1)
+      cytoscape-svg:
+        specifier: ^0.4.0
+        version: 0.4.0(cytoscape@3.33.1)
       react:
         specifier: ^19.1.0
         version: 19.2.4
@@ -960,6 +963,11 @@ packages:
 
   cytoscape-fcose@2.2.0:
     resolution: {integrity: sha512-ki1/VuRIHFCzxWNrsshHYPs6L7TvLu3DL+TyIGEsRcvVERmxokbf5Gdk7mFxZnTdiGtnA4cfSmjZJMviqSuZrQ==}
+    peerDependencies:
+      cytoscape: ^3.2.0
+
+  cytoscape-svg@0.4.0:
+    resolution: {integrity: sha512-omqIzfPd1Vy9mk6lHTiR2wTbjxELxb9GXSQ2pE6W+GwAe/6/yvOUQ2h5ApFf2QhCBnpMwLkCTq5DZXxBCgUpDw==}
     peerDependencies:
       cytoscape: ^3.2.0
 
@@ -2332,6 +2340,10 @@ snapshots:
   cytoscape-fcose@2.2.0(cytoscape@3.33.1):
     dependencies:
       cose-base: 2.2.0
+      cytoscape: 3.33.1
+
+  cytoscape-svg@0.4.0(cytoscape@3.33.1):
+    dependencies:
       cytoscape: 3.33.1
 
   cytoscape@3.33.1: {}

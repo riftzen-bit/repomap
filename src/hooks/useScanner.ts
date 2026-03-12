@@ -25,10 +25,12 @@ export function useScanner() {
   }, []);
 
   const startScan = useCallback(
-    async (path: string) => {
+    async (path: string, { silent = false } = {}) => {
       cleanup();
-      reset();
-      setScanStatus("scanning");
+      if (!silent) {
+        reset();
+        setScanStatus("scanning");
+      }
       projectPathRef.current = path;
 
       try {
@@ -64,7 +66,7 @@ export function useScanner() {
               if (debounceRef.timer) clearTimeout(debounceRef.timer);
               debounceRef.timer = setTimeout(() => {
                 if (projectPathRef.current) {
-                  startScan(projectPathRef.current);
+                  startScan(projectPathRef.current, { silent: true });
                 }
               }, 2000);
             });

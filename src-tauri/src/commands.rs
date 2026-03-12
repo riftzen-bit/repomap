@@ -127,6 +127,7 @@ pub async fn scan_project(
     // Step 3: Build graph on main thread, emitting progress
     let mut builder = GraphBuilder::new();
     let mut processed: u32 = 0;
+    let all_file_paths: Vec<&str> = parsed.iter().map(|(s, _)| s.relative_path.as_str()).collect();
 
     for (scanned, parse_result) in &parsed {
         if CANCEL_FLAG.load(Ordering::Relaxed) {
@@ -163,7 +164,6 @@ pub async fn scan_project(
         };
 
         // Resolve import paths to file IDs and add edges
-        let all_file_paths: Vec<&str> = parsed.iter().map(|(s, _)| s.relative_path.as_str()).collect();
         for import in &parse_result.imports {
             if let Some(target) = resolve_import(
                 import,
