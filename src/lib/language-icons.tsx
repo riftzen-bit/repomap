@@ -146,24 +146,3 @@ export function PhpIcon() {
     </svg>
   );
 }
-
-/** Map of language name → icon component */
-export const LANGUAGE_ICONS: Record<string, () => React.JSX.Element> = {
-  go: GoIcon,
-  rust: RustIcon,
-  typescript: TypeScriptIcon,
-  tsx: TypeScriptIcon,
-  javascript: TypeScriptIcon,
-  jsx: TypeScriptIcon,
-  python: PythonIcon,
-  java: JavaIcon,
-  c: CppIcon,
-  cpp: CppIcon,
-  ruby: RubyIcon,
-  php: PhpIcon,
-};
-
-/** Get the icon component for a language, or null */
-export function getLanguageIcon(language: string): (() => React.JSX.Element) | null {
-  return LANGUAGE_ICONS[language.toLowerCase()] ?? null;
-}

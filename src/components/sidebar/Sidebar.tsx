@@ -3,6 +3,7 @@ import { useGraphStore } from "../../stores/graphStore";
 import { FileInfo } from "./FileInfo";
 import { CodePreview } from "./CodePreview";
 import { ConnectionList } from "./ConnectionList";
+import { DirectoryFilter } from "../filters/DirectoryFilter";
 
 export function Sidebar() {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
@@ -14,12 +15,14 @@ export function Sidebar() {
     return graphData.nodes.find((n) => n.id === selectedNodeId) ?? null;
   }, [graphData, selectedNodeId]);
 
+  const isOpen = selectedNode !== null || graphData !== null;
+
   return (
     <aside
       className={`flex h-full w-80 shrink-0 flex-col border-l border-border bg-bg-secondary transition-all duration-300 ease-out ${
-        selectedNode ? "translate-x-0" : "translate-x-full"
+        isOpen ? "translate-x-0" : "translate-x-full"
       }`}
-      style={{ marginRight: selectedNode ? 0 : "-20rem" }}
+      style={{ marginRight: isOpen ? 0 : "-20rem" }}
     >
       {selectedNode && graphData ? (
         <>
@@ -66,10 +69,8 @@ export function Sidebar() {
           </div>
         </>
       ) : (
-        <div className="flex h-full items-center justify-center px-4">
-          <span className="font-mono text-xs text-text-muted text-center">
-            Click a node to see details
-          </span>
+        <div className="flex h-full flex-col gap-4 overflow-y-auto px-3 py-3">
+          <DirectoryFilter />
         </div>
       )}
     </aside>

@@ -202,6 +202,15 @@ function applyFilters(cy: cytoscape.Core, filters: Filters) {
       }
     }
 
+    // Directory filter
+    if (filters.directories.length > 0) {
+      const path = node.data("path") as string;
+      const topDir = path.includes("/") ? path.split("/")[0] : ".";
+      if (!filters.directories.includes(topDir)) {
+        visible = false;
+      }
+    }
+
     // Min connections filter
     if (connectedEdges < filters.minConnections) {
       visible = false;
