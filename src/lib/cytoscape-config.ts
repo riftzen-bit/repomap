@@ -467,6 +467,14 @@ export function buildCytoscapeStylesheet(
       } as cytoscape.Css.Node,
     },
     {
+      selector: "node.bookmarked",
+      style: {
+        "border-color": colors.accentWarning,
+        "border-width": 3,
+        "border-style": "double",
+      } as cytoscape.Css.Node,
+    },
+    {
       selector: "node.search-match",
       style: {
         "border-color": colors.accentWarning,

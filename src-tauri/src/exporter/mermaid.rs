@@ -68,7 +68,9 @@ pub fn export_mermaid(graph: &GraphData, path: &str) -> Result<(), String> {
 fn sanitize_id(path: &str) -> String {
     path.chars()
         .map(|c| match c {
-            '/' | '.' | '-' | ' ' | '@' | '(' | ')' | '[' | ']' => '_',
+            '/' | '.' | '-' | ' ' | '@' | '(' | ')' | '[' | ']'
+            | '+' | '#' | '{' | '}' | '<' | '>' | '&' | '"' | ';' | '\'' => '_',
+            _ if !c.is_ascii() => '_',
             _ => c,
         })
         .collect()

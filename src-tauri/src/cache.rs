@@ -86,7 +86,6 @@ impl FileCache {
     pub fn put(
         &self,
         relative_path: &str,
-        _content_hash_val: &str,
         result: &CachedParseResult,
     ) -> Result<(), String> {
         std::fs::create_dir_all(&self.cache_dir)

@@ -4,9 +4,9 @@ import { useGraphStore } from "../../stores/graphStore";
 import type { FilePreview } from "../../lib/types";
 
 // Lazy-load Shiki to reduce initial bundle size (~400KB savings)
-async function highlight(code: string, lang: string): Promise<string> {
+async function highlight(code: string, lang: string, theme: "dark" | "light"): Promise<string> {
   const { codeToHtml } = await import("shiki");
-  return codeToHtml(code, { lang, theme: "vitesse-dark" });
+  return codeToHtml(code, { lang, theme: theme === "light" ? "vitesse-light" : "vitesse-dark" });
 }
 
 interface CodePreviewProps {
@@ -24,6 +24,7 @@ function joinPath(root: string, relative: string): string {
 
 export function CodePreview({ filePath, language }: CodePreviewProps) {
   const projectRoot = useGraphStore((s) => s.projectRoot);
+  const theme = useGraphStore((s) => s.theme);
   const [html, setHtml] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -53,7 +54,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
         setTotalLines(preview.lineCount);
 
         const lang = mapLanguage(preview.language || language);
-        const highlighted = await highlight(preview.content, lang);
+        const highlighted = await highlight(preview.content, lang, theme);
 
         if (cancelled) return;
         setHtml(highlighted);
@@ -71,7 +72,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
     return () => {
       cancelled = true;
     };
-  }, [absolutePath, language]);
+  }, [absolutePath, language, theme]);
 
   async function handleShowMore() {
     const nextVisible = visibleLines + LOAD_MORE_LINES;
@@ -82,7 +83,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
       });
 
       const lang = mapLanguage(preview.language || language);
-      const highlighted = await highlight(preview.content, lang);
+      const highlighted = await highlight(preview.content, lang, theme);
 
       setHtml(highlighted);
       setVisibleLines(nextVisible);

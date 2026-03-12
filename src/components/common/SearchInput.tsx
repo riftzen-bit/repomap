@@ -11,6 +11,7 @@ export function SearchInput() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const listRef = useRef<HTMLDivElement>(null);
+  const blurTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const search = useCallback(
     (term: string) => {
@@ -42,6 +43,12 @@ export function SearchInput() {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [query, search]);
+
+  useEffect(() => {
+    return () => {
+      if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+    };
+  }, []);
 
   function handleSelect(id: string) {
     focusNode(id);
@@ -109,7 +116,10 @@ export function SearchInput() {
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         onFocus={() => results.length > 0 && setShowDropdown(true)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
+        onBlur={() => {
+          if (blurTimerRef.current) clearTimeout(blurTimerRef.current);
+          blurTimerRef.current = setTimeout(() => setShowDropdown(false), 150);
+        }}
         placeholder="Search files..."
         className="w-full rounded border border-border bg-bg-elevated py-1.5 pr-7 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-primary"
       />

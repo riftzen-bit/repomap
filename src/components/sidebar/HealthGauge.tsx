@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { computeHealthScore } from "../../lib/health";
+import { useGraphStore } from "../../stores/graphStore";
 import type { Insights } from "../../lib/types";
 
 interface Props {
@@ -14,6 +15,7 @@ function getScoreColor(score: number): string {
 
 export function HealthGauge({ insights }: Props) {
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const theme = useGraphStore((s) => s.theme);
   const { score, penalties } = computeHealthScore(insights);
 
   const radius = 36;
@@ -48,7 +50,7 @@ export function HealthGauge({ insights }: Props) {
             cy="44"
             r={radius}
             fill="none"
-            stroke="#222221"
+            stroke={theme === "light" ? "#dddcd9" : "#222221"}
             strokeWidth={stroke}
           />
           {/* Progress arc */}
@@ -85,7 +87,7 @@ export function HealthGauge({ insights }: Props) {
             dominantBaseline="middle"
             fontFamily="'Fira Code', monospace"
             fontSize="9"
-            fill="#63635e"
+            fill={theme === "light" ? "#8a8987" : "#63635e"}
           >
             /100
           </text>

@@ -103,7 +103,7 @@ pub async fn scan_project(
                 symbols: result.symbols.clone(),
                 imports: result.imports.clone(),
             };
-            let _ = file_cache.put(&scanned.relative_path, &hash, &cached);
+            let _ = file_cache.put(&scanned.relative_path, &cached);
 
             {
                 let mut idx = cache_index.lock().unwrap_or_else(|e| e.into_inner());
@@ -233,7 +233,7 @@ pub async fn get_file_preview(path: String, max_lines: u32) -> Result<FilePrevie
     let truncated = if max_lines > 0 && line_count > max_lines {
         lines[..max_lines as usize].join("\n")
     } else {
-        content.clone()
+        content
     };
 
     let language = scanner::detect_language(file_path).unwrap_or_else(|| "text".to_string());

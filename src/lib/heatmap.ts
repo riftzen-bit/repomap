@@ -4,7 +4,10 @@ export function normalizeFrequencies(
   const values = Object.values(frequencies);
   if (values.length === 0) return {};
 
-  const max = Math.max(...values);
+  let max = 0;
+  for (const v of values) {
+    if (v > max) max = v;
+  }
   if (max === 0) return Object.fromEntries(Object.keys(frequencies).map((k) => [k, 0]));
 
   const result: Record<string, number> = {};

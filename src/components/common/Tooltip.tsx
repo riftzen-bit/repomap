@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, type ReactNode } from "react";
+import { useState, useRef, useCallback, useEffect, type ReactNode } from "react";
 
 interface TooltipProps {
   text: string;
@@ -19,6 +19,12 @@ export function Tooltip({ text, children }: TooltipProps) {
       timerRef.current = null;
     }
     setVisible(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   return (
