@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getNodesWithinDepth } from "../../lib/graph-utils";
+import { getNodesWithinDepth, getImpactedNodes } from "../../lib/graph-utils";
 import type { Edge } from "../../lib/types";
 
 // Graph: A → B → C → D, A → E
@@ -66,5 +66,53 @@ describe("getNodesWithinDepth", () => {
     // B has edges: A→B and B→C
     const result = getNodesWithinDepth("B", edges, 1);
     expect(result).toEqual(new Set(["B", "A", "C"]));
+  });
+});
+
+describe("getImpactedNodes", () => {
+  const edges: Edge[] = [
+    { source: "a", target: "b", isCircular: false },
+    { source: "a", target: "c", isCircular: false },
+    { source: "b", target: "d", isCircular: false },
+    { source: "c", target: "d", isCircular: false },
+    { source: "d", target: "e", isCircular: false },
+  ];
+  // Edge semantics: source imports target
+  // Impact = reverse: if "b" changes, "a" is affected (because a imports b)
+
+  it("returns direct dependents at depth 1", () => {
+    const impacted = getImpactedNodes("b", edges);
+    expect(impacted.get("a")).toBe(1);
+    expect(impacted.size).toBe(1);
+  });
+
+  it("returns transitive dependents at depth 2+", () => {
+    const result = getImpactedNodes("d", edges);
+    expect(result.get("b")).toBe(1);
+    expect(result.get("c")).toBe(1);
+    expect(result.get("a")).toBe(2);
+    expect(result.size).toBe(3);
+  });
+
+  it("returns empty map for leaf nodes", () => {
+    const result = getImpactedNodes("a", edges);
+    expect(result.size).toBe(0);
+  });
+
+  it("handles nodes not in edge list", () => {
+    const result = getImpactedNodes("nonexistent", edges);
+    expect(result.size).toBe(0);
+  });
+
+  it("handles circular dependencies without infinite loop", () => {
+    const circularEdges: Edge[] = [
+      { source: "x", target: "y", isCircular: true },
+      { source: "y", target: "x", isCircular: true },
+      { source: "z", target: "x", isCircular: false },
+    ];
+    const result = getImpactedNodes("y", circularEdges);
+    expect(result.get("x")).toBe(1);
+    expect(result.get("z")).toBe(2);
+    expect(result.size).toBe(2);
   });
 });

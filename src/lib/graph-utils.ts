@@ -35,3 +35,41 @@ export function getNodesWithinDepth(
 
   return visited;
 }
+
+/**
+ * Reverse-BFS: find all files affected if startNode changes.
+ * Follows edges in reverse (source imports target → if target changes, source is affected).
+ * Returns Map<nodeId, depth> where depth = hops from startNode.
+ */
+export function getImpactedNodes(
+  startNodeId: string,
+  edges: Edge[],
+): Map<string, number> {
+  const reverseAdj = new Map<string, string[]>();
+  for (const edge of edges) {
+    if (!reverseAdj.has(edge.target)) reverseAdj.set(edge.target, []);
+    reverseAdj.get(edge.target)!.push(edge.source);
+  }
+
+  const impacted = new Map<string, number>();
+  const visited = new Set<string>([startNodeId]);
+  let frontier = [startNodeId];
+  let depth = 0;
+
+  while (frontier.length > 0) {
+    depth++;
+    const nextFrontier: string[] = [];
+    for (const nodeId of frontier) {
+      for (const dependent of reverseAdj.get(nodeId) ?? []) {
+        if (!visited.has(dependent)) {
+          visited.add(dependent);
+          impacted.set(dependent, depth);
+          nextFrontier.push(dependent);
+        }
+      }
+    }
+    frontier = nextFrontier;
+  }
+
+  return impacted;
+}
