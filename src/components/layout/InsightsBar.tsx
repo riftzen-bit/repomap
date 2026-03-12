@@ -17,7 +17,7 @@ export function InsightsBar() {
       <Metric
         label="Circular"
         value={insights.circularDeps.length}
-        color={insights.circularDeps.length > 0 ? "text-accent-red" : undefined}
+        color={insights.circularDeps.length > 0 ? "text-accent-danger" : undefined}
       />
 
       {/* Orphan files */}
@@ -25,7 +25,7 @@ export function InsightsBar() {
         label="Orphans"
         value={insights.orphanFiles.length}
         color={
-          insights.orphanFiles.length > 0 ? "text-accent-amber" : undefined
+          insights.orphanFiles.length > 0 ? "text-accent-warning" : undefined
         }
       />
 
@@ -33,7 +33,7 @@ export function InsightsBar() {
       <Metric
         label="Hubs"
         value={insights.hubFiles.length}
-        color={insights.hubFiles.length > 0 ? "text-accent-amber" : undefined}
+        color={insights.hubFiles.length > 0 ? "text-accent-warning" : undefined}
       />
 
       {/* Divider */}

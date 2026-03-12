@@ -92,7 +92,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
   if (loading) {
     return (
       <div className="flex items-center gap-2 py-4">
-        <span className="inline-block h-2 w-2 rounded-full bg-accent-cyan animate-pulse-slow" />
+        <span className="inline-block h-2 w-2 rounded-full bg-accent-primary animate-pulse-slow" />
         <span className="font-mono text-xs text-text-muted">Loading preview...</span>
       </div>
     );
@@ -100,7 +100,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
 
   if (error) {
     return (
-      <div className="rounded border border-accent-red/20 bg-accent-red/5 px-3 py-2 font-mono text-xs text-accent-red">
+      <div className="rounded border border-accent-danger/20 bg-accent-danger/5 px-3 py-2 font-mono text-xs text-accent-danger">
         {error}
       </div>
     );
@@ -118,7 +118,7 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
       {hasMore && (
         <button
           onClick={handleShowMore}
-          className="self-start rounded border border-border bg-bg-elevated px-2.5 py-1 font-mono text-[10px] text-text-muted transition-all duration-300 hover:border-accent-cyan hover:text-accent-cyan"
+          className="self-start rounded border border-border bg-bg-elevated px-2.5 py-1 font-mono text-[10px] text-text-muted transition-all duration-300 hover:border-accent-primary hover:text-accent-primary"
         >
           Show more ({totalLines - visibleLines} lines remaining)
         </button>

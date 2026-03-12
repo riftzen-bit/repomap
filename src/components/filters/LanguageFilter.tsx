@@ -32,7 +32,7 @@ export function LanguageFilter() {
         </span>
         <button
           onClick={toggleAll}
-          className="font-mono text-[10px] text-text-muted transition-colors duration-200 hover:text-accent-cyan"
+          className="font-mono text-[10px] text-text-muted transition-colors duration-200 hover:text-accent-primary"
         >
           {allActive ? "Deselect All" : "All"}
         </button>

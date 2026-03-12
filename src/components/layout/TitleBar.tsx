@@ -12,7 +12,7 @@ export function TitleBar() {
     >
       {/* Left: brand */}
       <div className="flex items-center gap-2">
-        <span className="font-mono text-sm font-bold tracking-wider text-accent-cyan text-glow-cyan">
+        <span className="font-mono text-sm font-bold tracking-wider text-accent-primary">
           RepoMap
         </span>
       </div>
@@ -56,7 +56,7 @@ export function TitleBar() {
         </button>
         <button
           onClick={() => appWindow.close()}
-          className="flex h-7 w-7 items-center justify-center rounded text-text-muted transition-colors duration-200 hover:bg-bg-elevated hover:text-accent-red"
+          className="flex h-7 w-7 items-center justify-center rounded text-text-muted transition-colors duration-200 hover:bg-bg-elevated hover:text-accent-danger"
           aria-label="Close"
         >
           <svg

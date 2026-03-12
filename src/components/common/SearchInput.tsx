@@ -87,7 +87,7 @@ export function SearchInput() {
         onFocus={() => results.length > 0 && setShowDropdown(true)}
         onBlur={() => setTimeout(() => setShowDropdown(false), 150)}
         placeholder="Search files..."
-        className="w-full rounded border border-border bg-bg-elevated py-1.5 pr-7 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-cyan"
+        className="w-full rounded border border-border bg-bg-elevated py-1.5 pr-7 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-primary"
       />
 
       {/* Clear button */}

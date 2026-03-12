@@ -55,10 +55,10 @@ export function FileInfo({ node, insights }: FileInfoProps) {
       {/* Status badges */}
       <div className="flex flex-wrap gap-1.5">
         <Badge label={node.language} color={langColor} variant="solid" />
-        {isHub && <Badge label="Hub File" color="#ffaa00" variant="solid" />}
+        {isHub && <Badge label="Hub File" color="#c9a84c" variant="solid" />}
         {isOrphan && <Badge label="Orphan" color="#7a7a8e" variant="outline" />}
         {isCircular && (
-          <Badge label="Circular Dep" color="#ff3355" variant="solid" />
+          <Badge label="Circular Dep" color="#c45c5c" variant="solid" />
         )}
       </div>
 
