@@ -67,8 +67,7 @@ export function useExporter(cyRef: React.RefObject<Core | null>) {
     if (!filePath) return;
 
     try {
-      const graphJson = JSON.stringify(graphData);
-      await invoke<string>("export_json", { graphJson, outputPath: filePath });
+      await invoke<string>("export_json", { outputPath: filePath });
     } catch (err) {
       setExportError(`JSON export failed: ${err instanceof Error ? err.message : String(err)}`);
     }
@@ -85,8 +84,7 @@ export function useExporter(cyRef: React.RefObject<Core | null>) {
     if (!filePath) return;
 
     try {
-      const graphJson = JSON.stringify(graphData);
-      await invoke<string>("export_mermaid", { graphJson, outputPath: filePath });
+      await invoke<string>("export_mermaid", { outputPath: filePath });
     } catch (err) {
       setExportError(`Mermaid export failed: ${err instanceof Error ? err.message : String(err)}`);
     }
