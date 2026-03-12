@@ -4,6 +4,7 @@ interface KeyboardHelpProps {
 
 const shortcuts = [
   { keys: ["Ctrl", "O"], description: "Open folder" },
+  { keys: ["Ctrl", "F"], description: "Focus search" },
   { keys: ["Ctrl", "+"], description: "Zoom in" },
   { keys: ["Ctrl", "-"], description: "Zoom out" },
   { keys: ["Ctrl", "0"], description: "Fit to screen" },

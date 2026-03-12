@@ -11,6 +11,7 @@ export interface GraphStore {
   graphData: GraphData | null;
   projectRoot: string | null;
   selectedNodeId: string | null;
+  focusRequestId: string | null;
   layout: "force" | "tree" | "circle";
   scanStatus: "idle" | "scanning" | "complete" | "error";
   scanProgress: { filesScanned: number; totalFiles: number } | null;
@@ -19,6 +20,7 @@ export interface GraphStore {
 
   setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
+  focusNode: (id: string) => void;
   setLayout: (layout: GraphStore["layout"]) => void;
   setScanStatus: (status: GraphStore["scanStatus"]) => void;
   updateScanProgress: (progress: GraphStore["scanProgress"]) => void;
@@ -31,6 +33,7 @@ const initialState = {
   graphData: null,
   projectRoot: null,
   selectedNodeId: null,
+  focusRequestId: null,
   layout: "force" as const,
   scanStatus: "idle" as const,
   scanProgress: null,
@@ -49,6 +52,8 @@ export const useGraphStore = create<GraphStore>()((set) => ({
     set({ graphData: data, projectRoot, scanStatus: "complete", errorMessage: null }),
 
   selectNode: (id) => set({ selectedNodeId: id }),
+
+  focusNode: (id) => set({ selectedNodeId: id, focusRequestId: id }),
 
   setLayout: (layout) => set({ layout }),
 

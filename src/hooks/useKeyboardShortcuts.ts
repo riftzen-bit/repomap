@@ -47,6 +47,14 @@ export function useKeyboardShortcuts({
             e.preventDefault();
             useGraphStore.getState().setLayout("circle");
             return;
+          case "f": {
+            e.preventDefault();
+            const searchInput = document.querySelector<HTMLInputElement>(
+              'input[placeholder="Search files..."]',
+            );
+            searchInput?.focus();
+            return;
+          }
         }
       }
 
