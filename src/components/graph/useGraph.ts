@@ -24,13 +24,28 @@ interface Filters {
   minConnections: number;
 }
 
+interface ContextMenuEvent {
+  x: number;
+  y: number;
+  nodeId: string;
+  nodePath: string;
+}
+
 interface UseGraphResult {
   cy: React.RefObject<cytoscape.Core | null>;
   zoomIn: () => void;
   zoomOut: () => void;
   fitToScreen: () => void;
   focusNode: (nodeId: string) => void;
+  focusNeighbors: (nodeId: string) => void;
+  hideNode: (nodeId: string) => void;
+  showOnlyConnected: (nodeId: string) => void;
+  resetView: () => void;
+  onContextMenu: ((event: ContextMenuEvent) => void) | null;
+  setOnContextMenu: (cb: ((event: ContextMenuEvent) => void) | null) => void;
 }
+
+export type { ContextMenuEvent };
 
 export function useGraph(
   containerRef: React.RefObject<HTMLDivElement | null>,
@@ -43,6 +58,7 @@ export function useGraph(
   const cyRef = useRef<cytoscape.Core | null>(null);
   const prevLayoutRef = useRef(layout);
   const prevFiltersRef = useRef(filters);
+  const contextMenuCbRef = useRef<((event: ContextMenuEvent) => void) | null>(null);
 
   // Initialize cytoscape instance
   useEffect(() => {
@@ -72,6 +88,27 @@ export function useGraph(
       if (evt.target === cy) {
         onSelectNode(null);
       }
+    });
+
+    // Node right-click → context menu
+    cy.on("cxttap", "node", (evt) => {
+      evt.originalEvent?.preventDefault();
+      const node = evt.target;
+      const container = containerRef.current;
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const renderedPos = node.renderedPosition();
+
+      const x = renderedPos.x + containerRect.left;
+      const y = renderedPos.y + containerRect.top;
+
+      contextMenuCbRef.current?.({
+        x: x - containerRect.left,
+        y: y - containerRect.top,
+        nodeId: node.id(),
+        nodePath: (node.data("path") as string) ?? node.id(),
+      });
     });
 
     // Node hover → highlight neighborhood
@@ -188,7 +225,79 @@ export function useGraph(
     node.select();
   }, []);
 
-  return { cy: cyRef, zoomIn, zoomOut, fitToScreen, focusNode };
+  const focusNeighbors = useCallback((nodeId: string) => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    const node = cy.getElementById(nodeId);
+    if (node.length === 0) return;
+
+    const neighborhood = node.neighborhood().add(node);
+    cy.animate({
+      fit: { eles: neighborhood, padding: 60 },
+      duration: 400,
+    });
+  }, []);
+
+  const hideNode = useCallback((nodeId: string) => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    const node = cy.getElementById(nodeId);
+    if (node.length === 0) return;
+
+    node.style("display", "none");
+    node.connectedEdges().style("display", "none");
+  }, []);
+
+  const showOnlyConnected = useCallback((nodeId: string) => {
+    const cy = cyRef.current;
+    if (!cy) return;
+    const node = cy.getElementById(nodeId);
+    if (node.length === 0) return;
+
+    const neighborhood = node.neighborhood().add(node);
+    const neighborhoodEdges = neighborhood.connectedEdges().filter((edge) => {
+      const src = edge.source();
+      const tgt = edge.target();
+      return neighborhood.contains(src) && neighborhood.contains(tgt);
+    });
+
+    cy.elements().not(neighborhood).not(neighborhoodEdges).style("display", "none");
+    neighborhood.style("display", "element");
+    neighborhoodEdges.style("display", "element");
+  }, []);
+
+  const resetView = useCallback(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    cy.nodes().style("display", "element");
+    cy.edges().style("display", "element");
+    cy.animate({
+      fit: { eles: cy.elements(), padding: 60 },
+      duration: 300,
+    });
+  }, []);
+
+  const setOnContextMenu = useCallback(
+    (cb: ((event: ContextMenuEvent) => void) | null) => {
+      contextMenuCbRef.current = cb;
+    },
+    [],
+  );
+
+  return {
+    cy: cyRef,
+    zoomIn,
+    zoomOut,
+    fitToScreen,
+    focusNode,
+    focusNeighbors,
+    hideNode,
+    showOnlyConnected,
+    resetView,
+    onContextMenu: contextMenuCbRef.current,
+    setOnContextMenu,
+  };
 }
 
 function applyFilters(cy: cytoscape.Core, filters: Filters) {
