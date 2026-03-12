@@ -3,18 +3,22 @@ use std::path::Path;
 use std::sync::atomic::{AtomicBool, Ordering};
 
 use rayon::prelude::*;
-use serde_json;
 use tauri::Emitter;
 
-use crate::graph::types::{FilePreview, GraphData, Node, ScanProgress};
+use crate::graph::types::{FilePreview, Node, ScanProgress};
 use crate::graph::GraphBuilder;
 use crate::parser;
 use crate::scanner::{self, MAX_FILE_SIZE};
+use crate::GraphState;
 
 static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
 
 #[tauri::command]
-pub async fn scan_project(window: tauri::Window, path: String) -> Result<(), String> {
+pub async fn scan_project(
+    window: tauri::Window,
+    state: tauri::State<'_, GraphState>,
+    path: String,
+) -> Result<(), String> {
     CANCEL_FLAG.store(false, Ordering::SeqCst);
 
     let root = Path::new(&path);
@@ -130,8 +134,12 @@ pub async fn scan_project(window: tauri::Window, path: String) -> Result<(), Str
         builder.add_node(node);
     }
 
-    // Step 4: Build final graph and emit
+    // Step 4: Build final graph, store in state, and emit
     let graph = builder.build();
+    {
+        let mut stored = state.lock().map_err(|e| format!("State lock error: {e}"))?;
+        *stored = Some(graph.clone());
+    }
     let _ = window.emit("scan:complete", &graph);
 
     Ok(())
@@ -172,22 +180,27 @@ pub async fn get_file_preview(path: String, max_lines: u32) -> Result<FilePrevie
 }
 
 #[tauri::command]
-pub async fn export_json(graph_json: String, output_path: String) -> Result<String, String> {
-    // Parse to validate and re-format
-    let graph: GraphData =
-        serde_json::from_str(&graph_json).map_err(|e| format!("Invalid graph data: {e}"))?;
+pub async fn export_json(
+    state: tauri::State<'_, GraphState>,
+    output_path: String,
+) -> Result<String, String> {
+    let stored = state.lock().map_err(|e| format!("State lock error: {e}"))?;
+    let graph = stored.as_ref().ok_or("No graph data available. Scan a project first.")?;
 
-    crate::exporter::json::export_json(&graph, &output_path)?;
+    crate::exporter::json::export_json(graph, &output_path)?;
 
     Ok(output_path)
 }
 
 #[tauri::command]
-pub async fn export_mermaid(graph_json: String, output_path: String) -> Result<String, String> {
-    let graph: GraphData =
-        serde_json::from_str(&graph_json).map_err(|e| format!("Invalid graph data: {e}"))?;
+pub async fn export_mermaid(
+    state: tauri::State<'_, GraphState>,
+    output_path: String,
+) -> Result<String, String> {
+    let stored = state.lock().map_err(|e| format!("State lock error: {e}"))?;
+    let graph = stored.as_ref().ok_or("No graph data available. Scan a project first.")?;
 
-    crate::exporter::mermaid::export_mermaid(&graph, &output_path)?;
+    crate::exporter::mermaid::export_mermaid(graph, &output_path)?;
 
     Ok(output_path)
 }

@@ -30,16 +30,16 @@ export function TypeScriptIcon() {
 export function PythonIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 128 128">
-      <linearGradient id="py-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)">
+      <linearGradient id="rm-py-a" gradientUnits="userSpaceOnUse" x1="70.252" y1="1237.476" x2="170.659" y2="1151.089" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)">
         <stop offset="0" stopColor="#5A9FD4" />
         <stop offset="1" stopColor="#306998" />
       </linearGradient>
-      <linearGradient id="py-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)">
+      <linearGradient id="rm-py-b" gradientUnits="userSpaceOnUse" x1="209.474" y1="1098.811" x2="173.62" y2="1149.537" gradientTransform="matrix(.563 0 0 -.568 -29.215 707.817)">
         <stop offset="0" stopColor="#FFD43B" />
         <stop offset="1" stopColor="#FFE873" />
       </linearGradient>
-      <path fill="url(#py-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)" />
-      <path fill="url(#py-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)" />
+      <path fill="url(#rm-py-a)" d="M63.391 1.988c-4.222.02-8.252.379-11.8 1.007-10.45 1.846-12.346 5.71-12.346 12.837v9.411h24.693v3.137H29.977c-7.176 0-13.46 4.313-15.426 12.521-2.268 9.405-2.368 15.275 0 25.096 1.755 7.311 5.947 12.519 13.124 12.519h8.491V67.234c0-8.151 7.051-15.34 15.426-15.34h24.665c6.866 0 12.346-5.654 12.346-12.548V15.833c0-6.693-5.646-11.72-12.346-12.837-4.244-.706-8.645-1.027-12.866-1.008zM50.037 9.557c2.55 0 4.634 2.117 4.634 4.721 0 2.593-2.083 4.69-4.634 4.69-2.56 0-4.633-2.097-4.633-4.69-.001-2.604 2.073-4.721 4.633-4.721z" transform="translate(0 10.26)" />
+      <path fill="url(#rm-py-b)" d="M91.682 28.38v10.966c0 8.5-7.208 15.655-15.426 15.655H51.591c-6.756 0-12.346 5.783-12.346 12.549v23.515c0 6.691 5.818 10.628 12.346 12.547 7.816 2.297 15.312 2.713 24.665 0 6.216-1.801 12.346-5.423 12.346-12.547v-9.412H63.938v-3.138h37.012c7.176 0 9.852-5.005 12.348-12.519 2.578-7.735 2.467-15.174 0-25.096-1.774-7.145-5.161-12.521-12.348-12.521h-9.268zM77.809 87.927c2.561 0 4.634 2.097 4.634 4.692 0 2.602-2.074 4.719-4.634 4.719-2.55 0-4.633-2.117-4.633-4.719 0-2.595 2.083-4.692 4.633-4.692z" transform="translate(0 10.26)" />
     </svg>
   );
 }
@@ -70,50 +70,50 @@ export function CppIcon() {
 export function RubyIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 128 128">
-      <linearGradient id="rb-a" gradientUnits="userSpaceOnUse" x1="157.08" y1="2382.05" x2="131.682" y2="2426.892" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-a" gradientUnits="userSpaceOnUse" x1="157.08" y1="2382.05" x2="131.682" y2="2426.892" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#FB7655" />
         <stop offset=".41" stopColor="#E42B1E" />
         <stop offset=".99" stopColor="#900" />
         <stop offset="1" stopColor="#900" />
       </linearGradient>
-      <linearGradient id="rb-b" gradientUnits="userSpaceOnUse" x1="169.731" y1="2419.72" x2="136.992" y2="2441.685" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-b" gradientUnits="userSpaceOnUse" x1="169.731" y1="2419.72" x2="136.992" y2="2441.685" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#871101" />
         <stop offset=".99" stopColor="#911209" />
         <stop offset="1" stopColor="#911209" />
       </linearGradient>
-      <linearGradient id="rb-c" gradientUnits="userSpaceOnUse" x1="143.542" y1="2380.69" x2="110.803" y2="2402.655" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-c" gradientUnits="userSpaceOnUse" x1="143.542" y1="2380.69" x2="110.803" y2="2402.655" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#871101" />
         <stop offset=".99" stopColor="#911209" />
         <stop offset="1" stopColor="#911209" />
       </linearGradient>
-      <linearGradient id="rb-d" gradientUnits="userSpaceOnUse" x1="74.817" y1="2435.622" x2="79.891" y2="2402.644" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-d" gradientUnits="userSpaceOnUse" x1="74.817" y1="2435.622" x2="79.891" y2="2402.644" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#fff" />
         <stop offset=".23" stopColor="#E57252" />
         <stop offset=".46" stopColor="#DE3B20" />
         <stop offset=".99" stopColor="#A60003" />
         <stop offset="1" stopColor="#A60003" />
       </linearGradient>
-      <linearGradient id="rb-e" gradientUnits="userSpaceOnUse" x1="109.719" y1="2466.413" x2="111.589" y2="2432.757" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-e" gradientUnits="userSpaceOnUse" x1="109.719" y1="2466.413" x2="111.589" y2="2432.757" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#fff" />
         <stop offset=".23" stopColor="#E4714E" />
         <stop offset=".56" stopColor="#BE1A0D" />
         <stop offset=".99" stopColor="#A80D00" />
         <stop offset="1" stopColor="#A80D00" />
       </linearGradient>
-      <linearGradient id="rb-f" gradientUnits="userSpaceOnUse" x1="140.691" y1="2497.523" x2="146.289" y2="2467.157" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
+      <linearGradient id="rm-rb-f" gradientUnits="userSpaceOnUse" x1="140.691" y1="2497.523" x2="146.289" y2="2467.157" gradientTransform="matrix(1 0 0 -1 -47.5 2517)">
         <stop offset="0" stopColor="#fff" />
         <stop offset=".18" stopColor="#E46342" />
         <stop offset=".4" stopColor="#C82410" />
         <stop offset=".99" stopColor="#A80D00" />
         <stop offset="1" stopColor="#A80D00" />
       </linearGradient>
-      <path fill="url(#rb-a)" d="M97.078 83.214L28.34 124.031l89.003-6.04 6.855-89.745z" />
-      <path fill="url(#rb-b)" d="M117.488 117.93l-7.649-52.799-20.837 27.514z" />
-      <path fill="url(#rb-c)" d="M117.592 117.93l-56.044-4.399-32.47 10.44z" />
-      <path fill="url(#rb-d)" d="M29.066 123.97L46.6 74.634l-29.15 6.122z" />
-      <path fill="url(#rb-e)" d="M89.137 90.788l20.83-63.622-63.014 30.55z" />
+      <path fill="url(#rm-rb-a)" d="M97.078 83.214L28.34 124.031l89.003-6.04 6.855-89.745z" />
+      <path fill="url(#rm-rb-b)" d="M117.488 117.93l-7.649-52.799-20.837 27.514z" />
+      <path fill="url(#rm-rb-c)" d="M117.592 117.93l-56.044-4.399-32.47 10.44z" />
+      <path fill="url(#rm-rb-d)" d="M29.066 123.97L46.6 74.634l-29.15 6.122z" />
+      <path fill="url(#rm-rb-e)" d="M89.137 90.788l20.83-63.622-63.014 30.55z" />
       <path fill="#fff" d="M17.343 65.131l12.205 59.098 17.27-49.457z" />
-      <path fill="url(#rb-f)" d="M109.876 27.27L84.005 0l-37.09 42.03z" />
+      <path fill="url(#rm-rb-f)" d="M109.876 27.27L84.005 0l-37.09 42.03z" />
       <path fill="#9E1209" d="M3.802 99.828c9.218 27.37 13.888 26.725 25.543 24.394l-12.07-59.09z" />
       <path fill="#891202" d="M46.891 42.03l62.358 48.666L84.005.215z" />
       <path fill="#ad1f05" d="M17.137 65.131L3.596 100.074 29.55 70.98z" />
@@ -128,14 +128,14 @@ export function PhpIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 128 128">
       <defs>
-        <radialGradient id="php-a" cx="0" cy="0" r="1" gradientTransform="matrix(84.04136 0 0 84.04136 38.426 42.169)" gradientUnits="userSpaceOnUse">
+        <radialGradient id="rm-php-a" cx="0" cy="0" r="1" gradientTransform="matrix(84.04136 0 0 84.04136 38.426 42.169)" gradientUnits="userSpaceOnUse">
           <stop stopColor="#AEB2D5" />
           <stop offset=".3" stopColor="#AEB2D5" />
           <stop offset=".75" stopColor="#484C89" />
           <stop offset="1" stopColor="#484C89" />
         </radialGradient>
       </defs>
-      <path fill="url(#php-a)" d="M0 64c0 18.593 28.654 33.667 64 33.667 35.346 0 64-15.074 64-33.667 0-18.593-28.655-33.667-64-33.667C28.654 30.333 0 45.407 0 64Z" />
+      <path fill="url(#rm-php-a)" d="M0 64c0 18.593 28.654 33.667 64 33.667 35.346 0 64-15.074 64-33.667 0-18.593-28.655-33.667-64-33.667C28.654 30.333 0 45.407 0 64Z" />
       <path fill="#777bb3" d="M64 95.167c33.965 0 61.5-13.955 61.5-31.167 0-17.214-27.535-31.167-61.5-31.167S2.5 46.786 2.5 64c0 17.212 27.535 31.167 61.5 31.167Z" />
       <path d="M34.772 67.864c2.793 0 4.877-.515 6.196-1.53 1.306-1.006 2.207-2.747 2.68-5.175.44-2.27.272-3.854-.5-4.71-.788-.874-2.493-1.317-5.067-1.317h-4.464l-2.473 12.732zM20.173 83.547a.694.694 0 0 1-.68-.828l6.557-33.738a.695.695 0 0 1 .68-.561h14.134c4.442 0 7.748 1.206 9.827 3.585 2.088 2.39 2.734 5.734 1.917 9.935-.333 1.711-.905 3.3-1.7 4.724a15.818 15.818 0 0 1-3.128 3.92c-1.531 1.432-3.264 2.472-5.147 3.083-1.852.604-4.232.91-7.07.91h-5.724l-1.634 8.408a.695.695 0 0 1-.682.562z" />
       <path fill="#fff" d="M34.19 55.826h3.891c3.107 0 4.186.682 4.553 1.089.607.674.723 2.097.331 4.112-.439 2.257-1.253 3.858-2.42 4.756-1.194.92-3.138 1.386-5.773 1.386h-2.786l2.205-11.342zm6.674-8.1H26.731a1.39 1.39 0 0 0-1.364 1.123L18.81 82.588a1.39 1.39 0 0 0 1.363 1.653h7.35a1.39 1.39 0 0 0 1.363-1.124l1.525-7.846h5.151c2.912 0 5.364-.318 7.287-.944 1.977-.642 3.796-1.731 5.406-3.237a16.522 16.522 0 0 0 3.259-4.087c.831-1.487 1.429-3.147 1.775-4.931.86-4.423.161-7.964-2.076-10.524-2.216-2.537-5.698-3.823-10.349-3.823z" />

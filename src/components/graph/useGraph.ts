@@ -93,7 +93,8 @@ export function useGraph(
     };
   }, [containerRef, onSelectNode]);
 
-  // Load/update graph data
+  // Rebuild graph when data changes
+  const prevGraphDataRef = useRef(graphData);
   useEffect(() => {
     const cy = cyRef.current;
     if (!cy || !graphData) return;
@@ -115,28 +116,30 @@ export function useGraph(
 
     const layoutConfig = getLayoutConfig(layout);
     cy.layout(layoutConfig as cytoscape.LayoutOptions).run();
-  }, [graphData, layout, filters]);
 
-  // React to layout changes
+    prevGraphDataRef.current = graphData;
+    prevLayoutRef.current = layout;
+    prevFiltersRef.current = filters;
+  }, [graphData]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Re-layout only when layout type changes (not on graphData change)
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy || !graphData) return;
-    if (prevLayoutRef.current === layout) return;
+    if (!cy || !graphData || prevLayoutRef.current === layout) return;
     prevLayoutRef.current = layout;
 
     const layoutConfig = getLayoutConfig(layout);
     cy.layout(layoutConfig as cytoscape.LayoutOptions).run();
-  }, [layout, graphData]);
+  }, [layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // React to filter changes
+  // Re-filter only when filters change (not on graphData change)
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy || !graphData) return;
-    if (prevFiltersRef.current === filters) return;
+    if (!cy || !graphData || prevFiltersRef.current === filters) return;
     prevFiltersRef.current = filters;
 
     applyFilters(cy, filters);
-  }, [filters, graphData]);
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // React to node selection
   useEffect(() => {
