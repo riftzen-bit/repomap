@@ -184,14 +184,14 @@ export function useGraph(
     cy.layout(layoutConfig as cytoscape.LayoutOptions).run();
   }, [layout]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Re-filter only when filters change (not on graphData change)
+  // Re-filter when filters or selectedNodeId changes (depth filter depends on selectedNodeId)
   useEffect(() => {
     const cy = cyRef.current;
-    if (!cy || !graphData || prevFiltersRef.current === filters) return;
-    prevFiltersRef.current = filters;
+    if (!cy || !graphData) return;
 
     applyFilters(cy, filters, graphData, selectedNodeId);
-  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
+    prevFiltersRef.current = filters;
+  }, [filters, selectedNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // React to node selection
   useEffect(() => {

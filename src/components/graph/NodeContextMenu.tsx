@@ -24,6 +24,7 @@ interface MenuItem {
 export function NodeContextMenu({
   x,
   y,
+  nodeId: _nodeId,
   onClose,
   onCopyPath,
   onFocusNeighbors,

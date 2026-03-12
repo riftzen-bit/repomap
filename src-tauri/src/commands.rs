@@ -82,11 +82,11 @@ pub async fn scan_project(
             // Check cache before parsing
             let hash = cache::content_hash(content.as_bytes());
             {
-                let idx = cache_index.lock().unwrap();
+                let idx = cache_index.lock().unwrap_or_else(|e| e.into_inner());
                 if let Some(cached) = file_cache.get(&scanned.relative_path, &hash, &idx) {
                     // Cache hit: update index entry and return cached result
                     drop(idx);
-                    let mut idx = cache_index.lock().unwrap();
+                    let mut idx = cache_index.lock().unwrap_or_else(|e| e.into_inner());
                     idx.entries.insert(scanned.relative_path.clone(), hash);
                     let result = parser::ParseResult {
                         symbols: cached.symbols,
@@ -106,7 +106,7 @@ pub async fn scan_project(
             let _ = file_cache.put(&scanned.relative_path, &hash, &cached);
 
             {
-                let mut idx = cache_index.lock().unwrap();
+                let mut idx = cache_index.lock().unwrap_or_else(|e| e.into_inner());
                 idx.entries.insert(scanned.relative_path.clone(), hash);
             }
 
@@ -127,6 +127,7 @@ pub async fn scan_project(
     // Step 3: Build graph on main thread, emitting progress
     let mut builder = GraphBuilder::new();
     let mut processed: u32 = 0;
+    let parsed_total = parsed.len() as u32;
     let all_file_paths: Vec<&str> = parsed.iter().map(|(s, _)| s.relative_path.as_str()).collect();
 
     for (scanned, parse_result) in &parsed {
@@ -141,7 +142,7 @@ pub async fn scan_project(
             "scan:progress",
             ScanProgress {
                 files_scanned: processed,
-                total_files: total,
+                total_files: parsed_total,
                 current_file: scanned.relative_path.clone(),
             },
         );
