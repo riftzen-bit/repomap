@@ -9,6 +9,7 @@ interface Filters {
 
 export interface GraphStore {
   graphData: GraphData | null;
+  projectRoot: string | null;
   selectedNodeId: string | null;
   layout: "force" | "tree" | "circle";
   scanStatus: "idle" | "scanning" | "complete" | "error";
@@ -16,7 +17,7 @@ export interface GraphStore {
   errorMessage: string | null;
   filters: Filters;
 
-  setGraphData: (data: GraphData) => void;
+  setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
   setLayout: (layout: GraphStore["layout"]) => void;
   setScanStatus: (status: GraphStore["scanStatus"]) => void;
@@ -28,6 +29,7 @@ export interface GraphStore {
 
 const initialState = {
   graphData: null,
+  projectRoot: null,
   selectedNodeId: null,
   layout: "force" as const,
   scanStatus: "idle" as const,
@@ -43,8 +45,8 @@ const initialState = {
 export const useGraphStore = create<GraphStore>()((set) => ({
   ...initialState,
 
-  setGraphData: (data) =>
-    set({ graphData: data, scanStatus: "complete", errorMessage: null }),
+  setGraphData: (data, projectRoot) =>
+    set({ graphData: data, projectRoot, scanStatus: "complete", errorMessage: null }),
 
   selectNode: (id) => set({ selectedNodeId: id }),
 

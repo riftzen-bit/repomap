@@ -12,14 +12,9 @@ const SYMBOL_GROUP_ORDER: SymbolKind[] = [
   "class",
   "struct",
   "interface",
-  "trait",
-  "enum",
   "function",
-  "method",
   "type",
-  "constant",
-  "variable",
-  "module",
+  "const",
 ];
 
 export function FileInfo({ node, insights }: FileInfoProps) {
@@ -49,7 +44,7 @@ export function FileInfo({ node, insights }: FileInfoProps) {
     <div className="flex flex-col gap-3">
       {/* File path */}
       <div className="font-mono text-xs text-text-secondary break-all leading-relaxed">
-        {node.path}
+        {node.id}
       </div>
 
       {/* Status badges */}
@@ -64,9 +59,9 @@ export function FileInfo({ node, insights }: FileInfoProps) {
 
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-        <MetricRow label="Lines" value={node.size} />
-        <MetricRow label="Imports" value={node.importCount} />
-        <MetricRow label="Imported by" value={node.exportCount} />
+        <MetricRow label="Lines" value={node.lines} />
+        <MetricRow label="Imports" value={node.imports.length} />
+        <MetricRow label="Imported by" value={node.importedBy.length} />
         <MetricRow label="Symbols" value={node.symbols.length} />
       </div>
 

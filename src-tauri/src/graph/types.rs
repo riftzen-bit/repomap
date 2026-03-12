@@ -51,6 +51,7 @@ pub struct Insights {
     pub circular_deps: Vec<Vec<String>>,
     pub orphan_files: Vec<String>,
     pub hub_files: Vec<String>,
+    #[serde(rename = "languageBreakdown")]
     pub languages: std::collections::HashMap<String, u32>,
 }
 

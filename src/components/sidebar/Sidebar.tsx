@@ -26,7 +26,7 @@ export function Sidebar() {
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <span className="truncate font-mono text-xs font-medium text-text-primary">
-              {selectedNode.filename}
+              {selectedNode.label.split("/").pop() ?? selectedNode.label}
             </span>
             <button
               onClick={() => selectNode(null)}
@@ -59,7 +59,7 @@ export function Sidebar() {
             <div className="border-t border-border pt-3">
               <SectionLabel text="Preview" />
               <CodePreview
-                filePath={selectedNode.path}
+                filePath={selectedNode.id}
                 language={selectedNode.language}
               />
             </div>

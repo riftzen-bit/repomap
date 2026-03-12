@@ -167,7 +167,7 @@ export function useGraph(
   const fitToScreen = useCallback(() => {
     const cy = cyRef.current;
     if (!cy) return;
-    cy.animate({ fit: { eles: cy.elements(), padding: 40 }, duration: 300 });
+    cy.animate({ fit: { eles: cy.elements(), padding: 60 }, duration: 300 });
   }, []);
 
   const focusNode = useCallback((nodeId: string) => {

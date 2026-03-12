@@ -12,7 +12,7 @@ export function DirectoryFilter() {
     const dirSet = new Set<string>();
     for (const node of graphData.nodes) {
       // Extract top-level directory from the relative path
-      const parts = node.path.split("/");
+      const parts = node.id.split("/");
       if (parts.length > 1) {
         dirSet.add(parts[0]);
       } else {

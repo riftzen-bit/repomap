@@ -21,11 +21,11 @@ export function SearchInput() {
       const matches = graphData.nodes
         .filter(
           (n) =>
-            n.filename.toLowerCase().includes(lower) ||
-            n.path.toLowerCase().includes(lower),
+            n.label.toLowerCase().includes(lower) ||
+            n.id.toLowerCase().includes(lower),
         )
         .slice(0, 10)
-        .map((n) => ({ id: n.id, path: n.path }));
+        .map((n) => ({ id: n.id, path: n.id }));
       setResults(matches);
       setShowDropdown(matches.length > 0);
     },
