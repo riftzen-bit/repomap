@@ -1,10 +1,25 @@
 import { useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useScanner } from "../../hooks/useScanner";
+import { useRecentProjects } from "../../hooks/useRecentProjects";
 import {
   GoIcon, RustIcon, TypeScriptIcon, PythonIcon,
   JavaIcon, CppIcon, RubyIcon, PhpIcon,
 } from "../../lib/language-icons";
+
+function relativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const seconds = Math.floor(diff / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}d ago`;
+  const months = Math.floor(days / 30);
+  return `${months}mo ago`;
+}
 
 const LANGUAGES: [string, () => React.JSX.Element][] = [
   ["Go", GoIcon],
@@ -45,6 +60,7 @@ function FeatureIcon({ type }: { type: string }) {
 
 export function EmptyState() {
   const { startScan } = useScanner();
+  const { entries: recentProjects, clear: clearRecent } = useRecentProjects();
   const [showHelp, setShowHelp] = useState(false);
 
   async function handleOpen() {
@@ -150,6 +166,50 @@ export function EmptyState() {
             >
               Hide
             </button>
+          </div>
+        )}
+
+        {/* Recent projects */}
+        {recentProjects.length > 0 && (
+          <div className="mt-2 flex w-full max-w-sm flex-col items-center gap-1.5">
+            <div className="flex w-full items-center justify-between px-1">
+              <span className="font-mono text-[10px] uppercase tracking-wider text-text-muted">
+                Recent
+              </span>
+              <button
+                onClick={clearRecent}
+                className="font-mono text-[10px] text-text-muted/50 transition-colors hover:text-text-muted"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="flex w-full flex-col divide-y divide-border/50 rounded-lg border border-border bg-bg-elevated">
+              {recentProjects.map((project) => (
+                <button
+                  key={project.path}
+                  onClick={() => startScan(project.path)}
+                  className="group flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-bg-surface"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    className="shrink-0 text-text-muted"
+                  >
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                  </svg>
+                  <span className="truncate font-mono text-xs text-text-secondary group-hover:text-text-primary">
+                    {project.name}
+                  </span>
+                  <span className="ml-auto shrink-0 font-mono text-[10px] text-text-muted">
+                    {relativeTime(project.scannedAt)}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>

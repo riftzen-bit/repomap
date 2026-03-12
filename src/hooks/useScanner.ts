@@ -2,6 +2,7 @@ import { useCallback, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { useGraphStore } from "../stores/graphStore";
+import { addRecent } from "./useRecentProjects";
 import type { GraphData, ScanProgress } from "../lib/types";
 
 export function useScanner() {
@@ -37,6 +38,7 @@ export function useScanner() {
           "scan:complete",
           (event) => {
             setGraphData(event.payload, path);
+            addRecent(path);
             cleanup();
           },
         );
