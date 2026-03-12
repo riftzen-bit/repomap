@@ -52,6 +52,7 @@ export function useGraph(
   filters: Filters,
   selectedNodeId: string | null,
   impactMode: boolean,
+  clusteringEnabled: boolean,
   onSelectNode: (id: string | null) => void,
 ): UseGraphResult {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -145,8 +146,18 @@ export function useGraph(
       circularIds,
     );
 
+    let finalElements = elements;
+
+    if (clusteringEnabled && layout === "force" && graphData.nodes.length > 30) {
+      const clusters = computeClusters(graphData.nodes);
+      if (clusters.length > 0) {
+        const compoundElements = buildCompoundElements(clusters);
+        finalElements = [...compoundElements, ...assignParents(elements, clusters)];
+      }
+    }
+
     cy.elements().remove();
-    cy.add(elements);
+    cy.add(finalElements);
 
     applyFilters(cy, filters, graphData, selectedNodeId);
 
