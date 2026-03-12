@@ -1,15 +1,19 @@
 import { open } from "@tauri-apps/plugin-dialog";
 import { useScanner } from "../../hooks/useScanner";
+import {
+  GoIcon, RustIcon, TypeScriptIcon, PythonIcon,
+  JavaIcon, CppIcon, RubyIcon, PhpIcon,
+} from "../../lib/language-icons";
 
-const LANGUAGES: [string, string][] = [
-  ["Go", "#7bae7f"],
-  ["Rust", "#d4915c"],
-  ["TypeScript", "#6b9ec4"],
-  ["Python", "#c9a84c"],
-  ["Java", "#8b7ec4"],
-  ["C / C++", "#a89f93"],
-  ["Ruby", "#c45c5c"],
-  ["PHP", "#8b7ec4"],
+const LANGUAGES: [string, () => React.JSX.Element][] = [
+  ["Go", GoIcon],
+  ["Rust", RustIcon],
+  ["TypeScript", TypeScriptIcon],
+  ["Python", PythonIcon],
+  ["Java", JavaIcon],
+  ["C / C++", CppIcon],
+  ["Ruby", RubyIcon],
+  ["PHP", PhpIcon],
 ];
 
 export function EmptyState() {
@@ -70,13 +74,12 @@ export function EmptyState() {
             <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted">
               Languages
             </p>
-            <div className="flex flex-col gap-1.5">
-              {LANGUAGES.map(([lang, color]) => (
-                <div key={lang} className="flex items-center gap-2.5">
-                  <span
-                    className="h-1 w-3 shrink-0"
-                    style={{ backgroundColor: color }}
-                  />
+            <div className="flex flex-col gap-2">
+              {LANGUAGES.map(([lang, IconComponent]) => (
+                <div key={lang} className="flex items-center gap-3">
+                  <span className="shrink-0 opacity-80">
+                    <IconComponent />
+                  </span>
                   <span className="font-mono text-[11px] text-text-secondary">
                     {lang}
                   </span>
