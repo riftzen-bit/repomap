@@ -1,7 +1,10 @@
-import { useRef, useCallback } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useGraphStore } from "../../stores/graphStore";
 import { useGraph } from "./useGraph";
+import { useExporter } from "../../hooks/useExporter";
+import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { GraphControls } from "./GraphControls";
+import { KeyboardHelp } from "../common/KeyboardHelp";
 
 export function GraphCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -19,7 +22,7 @@ export function GraphCanvas() {
     [selectNode],
   );
 
-  const { zoomIn, zoomOut, fitToScreen } = useGraph(
+  const { cy, zoomIn, zoomOut, fitToScreen } = useGraph(
     containerRef,
     graphData,
     layout,
@@ -27,6 +30,13 @@ export function GraphCanvas() {
     selectedNodeId,
     onSelectNode,
   );
+
+  const { exportSvg, exportPng, exportJson, exportMermaid } = useExporter(cy);
+
+  const [showHelp, setShowHelp] = useState(false);
+  const toggleHelp = useCallback(() => setShowHelp((prev) => !prev), []);
+
+  useKeyboardShortcuts({ zoomIn, zoomOut, fitToScreen, onToggleHelp: toggleHelp });
 
   if (!graphData) {
     return (
@@ -45,7 +55,12 @@ export function GraphCanvas() {
         onZoomIn={zoomIn}
         onZoomOut={zoomOut}
         onFitToScreen={fitToScreen}
+        onExportSvg={exportSvg}
+        onExportPng={exportPng}
+        onExportJson={exportJson}
+        onExportMermaid={exportMermaid}
       />
+      {showHelp && <KeyboardHelp onClose={() => setShowHelp(false)} />}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { open } from "@tauri-apps/plugin-dialog";
 import { useGraphStore } from "../../stores/graphStore";
 import { useScanner } from "../../hooks/useScanner";
 import { getLanguageColor } from "../../lib/colors";
+import { SearchInput } from "../common/SearchInput";
 
 const LAYOUTS = ["force", "tree", "circle"] as const;
 
@@ -82,26 +83,8 @@ export function ControlsBar() {
       <div className="h-5 w-px bg-border" />
 
       {/* Search */}
-      <div className="relative flex-1 max-w-64">
-        <svg
-          className="absolute left-2 top-1/2 -translate-y-1/2 text-text-muted"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Search files..."
-          className="w-full rounded border border-border bg-bg-primary py-1.5 pr-2 pl-8 font-mono text-xs text-text-primary placeholder:text-text-muted outline-none transition-colors duration-300 focus:border-accent-primary"
-        />
+      <div className="flex-1 max-w-64">
+        <SearchInput />
       </div>
 
       {/* Language filters */}
