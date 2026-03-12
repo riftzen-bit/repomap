@@ -17,6 +17,7 @@ export function GraphCanvas() {
   const filters = useGraphStore((s) => s.filters);
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const focusRequestId = useGraphStore((s) => s.focusRequestId);
+  const impactMode = useGraphStore((s) => s.impactMode);
   const selectNode = useGraphStore((s) => s.selectNode);
 
   const onSelectNode = useCallback(
@@ -37,7 +38,7 @@ export function GraphCanvas() {
     showOnlyConnected,
     resetView,
     setOnContextMenu,
-  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, onSelectNode);
+  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, onSelectNode);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
 

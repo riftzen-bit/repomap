@@ -2,6 +2,8 @@ import { useState, useMemo } from "react";
 import type { Node, SymbolKind, Insights } from "../../lib/types";
 import { getLanguageColor } from "../../lib/colors";
 import { Badge } from "../common/Badge";
+import { useGraphStore } from "../../stores/graphStore";
+import { getImpactedNodes } from "../../lib/graph-utils";
 
 interface FileInfoProps {
   node: Node;
@@ -65,6 +67,9 @@ export function FileInfo({ node, insights }: FileInfoProps) {
         <MetricRow label="Symbols" value={node.symbols.length} />
       </div>
 
+      {/* Impact Analysis */}
+      <ImpactToggle node={node} />
+
       {/* Symbols (collapsible) */}
       {node.symbols.length > 0 && (
         <div className="border-t border-border pt-2">
@@ -114,6 +119,42 @@ export function FileInfo({ node, insights }: FileInfoProps) {
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function ImpactToggle({ node }: { node: Node }) {
+  const impactMode = useGraphStore((s) => s.impactMode);
+  const setImpactMode = useGraphStore((s) => s.setImpactMode);
+  const graphData = useGraphStore((s) => s.graphData);
+
+  const impactCount = useMemo(() => {
+    if (!graphData) return { direct: 0, total: 0 };
+    const impacted = getImpactedNodes(node.id, graphData.edges);
+    let direct = 0;
+    for (const depth of impacted.values()) {
+      if (depth === 1) direct++;
+    }
+    return { direct, total: impacted.size };
+  }, [node.id, graphData]);
+
+  if (impactCount.total === 0) return null;
+
+  return (
+    <div className="border-t border-border pt-2">
+      <button
+        onClick={() => setImpactMode(!impactMode)}
+        className={`flex w-full items-center justify-between rounded border px-2.5 py-1.5 font-mono text-[11px] transition-all duration-300 ${
+          impactMode
+            ? "border-accent-primary bg-accent-primary/10 text-accent-primary"
+            : "border-border bg-bg-elevated text-text-secondary hover:border-accent-primary hover:text-accent-primary"
+        }`}
+      >
+        <span>Impact Analysis</span>
+        <span className="text-[10px] text-text-muted">
+          {impactCount.direct} direct / {impactCount.total} total
+        </span>
+      </button>
     </div>
   );
 }

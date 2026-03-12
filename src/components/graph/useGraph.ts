@@ -7,8 +7,11 @@ import {
   buildCytoscapeElements,
   cytoscapeStylesheet,
   getLayoutConfig,
+  buildCompoundElements,
+  assignParents,
 } from "../../lib/cytoscape-config";
-import { getNodesWithinDepth } from "../../lib/graph-utils";
+import { computeClusters } from "../../lib/clustering";
+import { getNodesWithinDepth, getImpactedNodes } from "../../lib/graph-utils";
 
 // Register extensions exactly once
 let extensionsRegistered = false;
@@ -48,6 +51,7 @@ export function useGraph(
   layout: "force" | "tree" | "circle",
   filters: Filters,
   selectedNodeId: string | null,
+  impactMode: boolean,
   onSelectNode: (id: string | null) => void,
 ): UseGraphResult {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -186,6 +190,48 @@ export function useGraph(
       }
     }
   }, [selectedNodeId]);
+
+  // Impact analysis highlighting
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy || !graphData) return;
+
+    // Clear previous impact classes
+    cy.elements().removeClass("impact-1 impact-2 impact-3 impact-far impact-none");
+
+    if (!impactMode || !selectedNodeId) return;
+
+    const impacted = getImpactedNodes(selectedNodeId, graphData.edges);
+
+    cy.nodes().forEach((node) => {
+      const nodeId = node.id();
+      if (nodeId === selectedNodeId) return; // Keep selected node as-is
+
+      const depth = impacted.get(nodeId);
+      if (depth === undefined) {
+        node.addClass("impact-none");
+      } else if (depth === 1) {
+        node.addClass("impact-1");
+      } else if (depth === 2) {
+        node.addClass("impact-2");
+      } else if (depth === 3) {
+        node.addClass("impact-3");
+      } else {
+        node.addClass("impact-far");
+      }
+    });
+
+    // Dim edges not connected to impacted nodes
+    cy.edges().forEach((edge) => {
+      const srcId = edge.source().id();
+      const tgtId = edge.target().id();
+      const srcImpacted = srcId === selectedNodeId || impacted.has(srcId);
+      const tgtImpacted = tgtId === selectedNodeId || impacted.has(tgtId);
+      if (!srcImpacted || !tgtImpacted) {
+        edge.addClass("impact-none");
+      }
+    });
+  }, [impactMode, selectedNodeId, graphData]);
 
   const zoomIn = useCallback(() => {
     const cy = cyRef.current;

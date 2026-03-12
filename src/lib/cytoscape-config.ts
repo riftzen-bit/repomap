@@ -308,6 +308,74 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
     } as cytoscape.Css.Node,
   },
   {
+    selector: "node.impact-1",
+    style: {
+      "border-color": "#f0a050",
+      "border-width": 4,
+      "border-opacity": 1,
+      opacity: 1,
+    } as cytoscape.Css.Node,
+  },
+  {
+    selector: "node.impact-2",
+    style: {
+      "border-color": "#f0a050",
+      "border-width": 3,
+      "border-opacity": 0.7,
+      opacity: 0.85,
+    } as cytoscape.Css.Node,
+  },
+  {
+    selector: "node.impact-3",
+    style: {
+      "border-color": "#f0a050",
+      "border-width": 2,
+      "border-opacity": 0.5,
+      opacity: 0.7,
+    } as cytoscape.Css.Node,
+  },
+  {
+    selector: "node.impact-far",
+    style: {
+      "border-color": "#f0a050",
+      "border-width": 2,
+      "border-opacity": 0.3,
+      opacity: 0.55,
+    } as cytoscape.Css.Node,
+  },
+  {
+    selector: "node.impact-none",
+    style: {
+      opacity: 0.1,
+    } as cytoscape.Css.Node,
+  },
+  {
+    selector: "edge.impact-none",
+    style: {
+      opacity: 0.05,
+    } as cytoscape.Css.Edge,
+  },
+  {
+    selector: "node:parent",
+    style: {
+      "background-color": "#2a2a28",
+      "background-opacity": 0.4,
+      "border-color": "#5a5348",
+      "border-width": 1,
+      "border-style": "dashed",
+      "border-opacity": 0.5,
+      label: "data(label)",
+      "font-size": "10px",
+      "font-family": "Fira Code, monospace",
+      color: "#63635e",
+      "text-valign": "top",
+      "text-halign": "center",
+      "text-margin-y": -6,
+      padding: "20px",
+      shape: "roundrectangle",
+    } as unknown as cytoscape.Css.Node,
+  },
+  {
     selector: "edge",
     style: edgeBaseStyle as cytoscape.Css.Edge,
   },
@@ -336,3 +404,34 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
     } as cytoscape.Css.Edge,
   },
 ];
+
+export function buildCompoundElements(
+  clusters: Array<{ id: string; label: string; nodeIds: string[] }>,
+): cytoscape.ElementDefinition[] {
+  return clusters.map((cluster) => ({
+    data: {
+      id: `cluster:${cluster.id}`,
+      label: cluster.label,
+    },
+  }));
+}
+
+export function assignParents(
+  elements: cytoscape.ElementDefinition[],
+  clusters: Array<{ id: string; nodeIds: string[] }>,
+): cytoscape.ElementDefinition[] {
+  const nodeToParent = new Map<string, string>();
+  for (const cluster of clusters) {
+    for (const nodeId of cluster.nodeIds) {
+      nodeToParent.set(nodeId, `cluster:${cluster.id}`);
+    }
+  }
+
+  return elements.map((el) => {
+    const parent = el.data.id ? nodeToParent.get(el.data.id) : undefined;
+    if (parent) {
+      return { ...el, data: { ...el.data, parent } };
+    }
+    return el;
+  });
+}
