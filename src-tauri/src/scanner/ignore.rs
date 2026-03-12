@@ -45,14 +45,6 @@ const LOCK_FILES: &[&str] = &[
     "composer.lock",
 ];
 
-pub fn default_ignore_patterns() -> Vec<&'static str> {
-    let mut patterns = Vec::new();
-    patterns.extend_from_slice(IGNORED_DIRS);
-    patterns.extend_from_slice(IGNORED_FILES);
-    patterns.extend_from_slice(LOCK_FILES);
-    patterns
-}
-
 /// Build a gitignore matcher from the project root's .gitignore file.
 /// Returns `None` if no .gitignore exists or it fails to parse.
 fn load_gitignore(root: &Path) -> Option<Gitignore> {
