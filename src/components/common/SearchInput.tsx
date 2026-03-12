@@ -5,7 +5,7 @@ export function SearchInput() {
   const [query, setQuery] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const graphData = useGraphStore((s) => s.graphData);
-  const selectNode = useGraphStore((s) => s.selectNode);
+  const focusNode = useGraphStore((s) => s.focusNode);
 
   const [results, setResults] = useState<Array<{ id: string; path: string }>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -41,7 +41,7 @@ export function SearchInput() {
   }, [query, search]);
 
   function handleSelect(id: string) {
-    selectNode(id);
+    focusNode(id);
     setShowDropdown(false);
     setQuery("");
   }

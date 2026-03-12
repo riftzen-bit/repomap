@@ -9,7 +9,7 @@ interface ConnectionListProps {
 
 export function ConnectionList({ node }: ConnectionListProps) {
   const graphData = useGraphStore((s) => s.graphData);
-  const selectNode = useGraphStore((s) => s.selectNode);
+  const focusNode = useGraphStore((s) => s.focusNode);
 
   const { imports, importedBy } = useMemo(() => {
     if (!graphData) return { imports: [], importedBy: [] };
@@ -58,12 +58,12 @@ export function ConnectionList({ node }: ConnectionListProps) {
       <ConnectionSection
         title="Imports"
         entries={imports}
-        onSelect={selectNode}
+        onSelect={focusNode}
       />
       <ConnectionSection
         title="Imported By"
         entries={importedBy}
-        onSelect={selectNode}
+        onSelect={focusNode}
       />
     </div>
   );
