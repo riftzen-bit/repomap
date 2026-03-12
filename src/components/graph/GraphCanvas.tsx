@@ -19,6 +19,8 @@ export function GraphCanvas() {
   const focusRequestId = useGraphStore((s) => s.focusRequestId);
   const impactMode = useGraphStore((s) => s.impactMode);
   const clusteringEnabled = useGraphStore((s) => s.clusteringEnabled);
+  const heatmapMode = useGraphStore((s) => s.heatmapMode);
+  const heatmapData = useGraphStore((s) => s.heatmapData);
   const selectNode = useGraphStore((s) => s.selectNode);
 
   const onSelectNode = useCallback(
@@ -39,7 +41,7 @@ export function GraphCanvas() {
     showOnlyConnected,
     resetView,
     setOnContextMenu,
-  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, onSelectNode);
+  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, heatmapMode, heatmapData, onSelectNode);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
 

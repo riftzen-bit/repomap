@@ -1,4 +1,5 @@
 import { open } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 import { useGraphStore } from "../../stores/graphStore";
 import { useScanner } from "../../hooks/useScanner";
 import { getLanguageColor } from "../../lib/colors";
@@ -16,6 +17,10 @@ export function ControlsBar() {
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
   const clusteringEnabled = useGraphStore((s) => s.clusteringEnabled);
   const setClusteringEnabled = useGraphStore((s) => s.setClusteringEnabled);
+  const heatmapMode = useGraphStore((s) => s.heatmapMode);
+  const setHeatmapMode = useGraphStore((s) => s.setHeatmapMode);
+  const heatmapData = useGraphStore((s) => s.heatmapData);
+  const setHeatmapData = useGraphStore((s) => s.setHeatmapData);
   const { startScan } = useScanner();
 
   const languages = graphData
@@ -39,6 +44,23 @@ export function ControlsBar() {
       ? current.filter((l) => l !== lang)
       : [...current, lang];
     updateFilters({ languages: next });
+  }
+
+  async function handleHeatmapToggle() {
+    if (heatmapMode) {
+      setHeatmapMode(false);
+      return;
+    }
+
+    if (!heatmapData && projectRoot) {
+      try {
+        const data = await invoke<Record<string, number>>("get_change_frequencies", { root: projectRoot });
+        setHeatmapData(data);
+      } catch {
+        return;
+      }
+    }
+    setHeatmapMode(true);
   }
 
   return (
@@ -148,6 +170,23 @@ export function ControlsBar() {
             }`}
           >
             Clusters
+          </button>
+        </>
+      )}
+
+      {/* Heatmap toggle */}
+      {projectRoot && (
+        <>
+          <div className="h-5 w-px bg-border" />
+          <button
+            onClick={handleHeatmapToggle}
+            className={`rounded border px-2.5 py-1 font-mono text-[10px] transition-all duration-300 ${
+              heatmapMode
+                ? "border-accent-danger bg-accent-danger/10 text-accent-danger"
+                : "border-border bg-bg-elevated text-text-muted hover:border-accent-danger hover:text-accent-danger"
+            }`}
+          >
+            Heatmap
           </button>
         </>
       )}

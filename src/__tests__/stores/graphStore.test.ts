@@ -490,6 +490,19 @@ describe("impactMode", () => {
     useGraphStore.getState().reset();
     expect(useGraphStore.getState().impactMode).toBe(false);
   });
+
+  it("disables heatmapMode when enabling impactMode", () => {
+    useGraphStore.getState().setHeatmapMode(true);
+    useGraphStore.getState().setImpactMode(true);
+    expect(useGraphStore.getState().impactMode).toBe(true);
+    expect(useGraphStore.getState().heatmapMode).toBe(false);
+  });
+
+  it("preserves heatmapMode when disabling impactMode", () => {
+    useGraphStore.getState().setHeatmapMode(true);
+    useGraphStore.getState().setImpactMode(false);
+    expect(useGraphStore.getState().heatmapMode).toBe(true);
+  });
 });
 
 describe("clusteringEnabled", () => {
@@ -518,5 +531,60 @@ describe("clusteringEnabled", () => {
     useGraphStore.getState().setClusteringEnabled(true);
     useGraphStore.getState().reset();
     expect(useGraphStore.getState().clusteringEnabled).toBe(false);
+  });
+});
+
+describe("heatmapMode", () => {
+  it("defaults to false", () => {
+    expect(useGraphStore.getState().heatmapMode).toBe(false);
+  });
+
+  it("defaults heatmapData to null", () => {
+    expect(useGraphStore.getState().heatmapData).toBeNull();
+  });
+
+  it("toggles heatmap mode", () => {
+    useGraphStore.getState().setHeatmapMode(true);
+    expect(useGraphStore.getState().heatmapMode).toBe(true);
+
+    useGraphStore.getState().setHeatmapMode(false);
+    expect(useGraphStore.getState().heatmapMode).toBe(false);
+  });
+
+  it("stores heatmap data", () => {
+    const data = { "src/index.ts": 10, "src/utils.ts": 3 };
+    useGraphStore.getState().setHeatmapData(data);
+    expect(useGraphStore.getState().heatmapData).toEqual(data);
+  });
+
+  it("disables impactMode when enabling heatmapMode", () => {
+    useGraphStore.getState().setImpactMode(true);
+    useGraphStore.getState().setHeatmapMode(true);
+    expect(useGraphStore.getState().heatmapMode).toBe(true);
+    expect(useGraphStore.getState().impactMode).toBe(false);
+  });
+
+  it("preserves impactMode when disabling heatmapMode", () => {
+    useGraphStore.getState().setImpactMode(true);
+    useGraphStore.getState().setHeatmapMode(false);
+    expect(useGraphStore.getState().impactMode).toBe(true);
+  });
+
+  it("resets heatmapMode when node is deselected", () => {
+    useGraphStore.getState().setHeatmapMode(true);
+    useGraphStore.getState().selectNode(null);
+    expect(useGraphStore.getState().heatmapMode).toBe(false);
+  });
+
+  it("resets heatmapMode on full reset", () => {
+    useGraphStore.getState().setHeatmapMode(true);
+    useGraphStore.getState().reset();
+    expect(useGraphStore.getState().heatmapMode).toBe(false);
+  });
+
+  it("resets heatmapData on full reset", () => {
+    useGraphStore.getState().setHeatmapData({ "a.ts": 5 });
+    useGraphStore.getState().reset();
+    expect(useGraphStore.getState().heatmapData).toBeNull();
   });
 });

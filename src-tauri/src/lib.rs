@@ -23,6 +23,7 @@ pub fn run() {
             commands::get_file_preview,
             commands::export_json,
             commands::export_mermaid,
+            commands::get_change_frequencies,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

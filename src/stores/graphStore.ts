@@ -13,6 +13,8 @@ export interface GraphStore {
   filters: Filters;
   impactMode: boolean;
   clusteringEnabled: boolean;
+  heatmapMode: boolean;
+  heatmapData: Record<string, number> | null;
 
   setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
@@ -24,6 +26,8 @@ export interface GraphStore {
   updateFilters: (filters: Partial<Filters>) => void;
   setImpactMode: (enabled: boolean) => void;
   setClusteringEnabled: (enabled: boolean) => void;
+  setHeatmapMode: (enabled: boolean) => void;
+  setHeatmapData: (data: Record<string, number>) => void;
   reset: () => void;
 }
 
@@ -44,6 +48,8 @@ const initialState = {
   },
   impactMode: false,
   clusteringEnabled: false,
+  heatmapMode: false,
+  heatmapData: null,
 };
 
 export const useGraphStore = create<GraphStore>()((set) => ({
@@ -58,6 +64,7 @@ export const useGraphStore = create<GraphStore>()((set) => ({
         ? {
             selectedNodeId: null,
             impactMode: false,
+            heatmapMode: false,
             filters:
               state.filters.maxDepth !== null
                 ? { ...state.filters, maxDepth: null }
@@ -86,9 +93,21 @@ export const useGraphStore = create<GraphStore>()((set) => ({
       filters: { ...state.filters, ...filters },
     })),
 
-  setImpactMode: (enabled) => set({ impactMode: enabled }),
+  setImpactMode: (enabled) =>
+    set((state) => ({
+      impactMode: enabled,
+      heatmapMode: enabled ? false : state.heatmapMode,
+    })),
 
   setClusteringEnabled: (enabled) => set({ clusteringEnabled: enabled }),
+
+  setHeatmapMode: (enabled) =>
+    set((state) => ({
+      heatmapMode: enabled,
+      impactMode: enabled ? false : state.impactMode,
+    })),
+
+  setHeatmapData: (data) => set({ heatmapData: data }),
 
   reset: () => set(initialState),
 }));

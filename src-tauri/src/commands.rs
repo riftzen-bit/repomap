@@ -205,6 +205,25 @@ pub async fn export_mermaid(
     Ok(output_path)
 }
 
+#[tauri::command]
+pub async fn get_change_frequencies(root: String) -> Result<std::collections::HashMap<String, u32>, String> {
+    let root_path = std::path::Path::new(&root);
+    let output = crate::git::git_command(
+        &["log", "--max-count=500", "--format=", "--name-only"],
+        root_path,
+    )?;
+
+    let mut counts: std::collections::HashMap<String, u32> = std::collections::HashMap::new();
+    for line in output.lines() {
+        let trimmed = line.trim();
+        if !trimmed.is_empty() {
+            *counts.entry(trimmed.to_string()).or_insert(0) += 1;
+        }
+    }
+
+    Ok(counts)
+}
+
 /// Heuristic: detect common entry point filenames.
 fn is_entry_point(relative_path: &str, language: &str) -> bool {
     let filename = Path::new(relative_path)

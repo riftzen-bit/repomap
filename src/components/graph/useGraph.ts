@@ -12,6 +12,7 @@ import {
 } from "../../lib/cytoscape-config";
 import { computeClusters } from "../../lib/clustering";
 import { getNodesWithinDepth, getImpactedNodes } from "../../lib/graph-utils";
+import { normalizeFrequencies, interpolateHeatColor } from "../../lib/heatmap";
 
 // Register extensions exactly once
 let extensionsRegistered = false;
@@ -53,6 +54,8 @@ export function useGraph(
   selectedNodeId: string | null,
   impactMode: boolean,
   clusteringEnabled: boolean,
+  heatmapMode: boolean,
+  heatmapData: Record<string, number> | null,
   onSelectNode: (id: string | null) => void,
 ): UseGraphResult {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -244,6 +247,38 @@ export function useGraph(
       }
     });
   }, [impactMode, selectedNodeId, graphData]);
+
+  // Heatmap color overlay
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    if (!heatmapMode || !heatmapData) {
+      // Restore original node colors from data
+      cy.nodes().forEach((node) => {
+        if (node.isParent()) return;
+        const originalColor = node.data("nodeColor") as string;
+        if (originalColor) {
+          node.style("background-color", originalColor);
+        }
+      });
+      return;
+    }
+
+    const normalized = normalizeFrequencies(heatmapData);
+
+    cy.nodes().forEach((node) => {
+      if (node.isParent()) return;
+      const path = node.data("path") as string;
+      const freq = normalized[path];
+      if (freq !== undefined) {
+        node.style("background-color", interpolateHeatColor(freq));
+      } else {
+        // File not in git log -- show as cold
+        node.style("background-color", interpolateHeatColor(0));
+      }
+    });
+  }, [heatmapMode, heatmapData]);
 
   const zoomIn = useCallback(() => {
     const cy = cyRef.current;
