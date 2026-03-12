@@ -167,7 +167,7 @@ export function useGraph(
     prevGraphDataRef.current = graphData;
     prevLayoutRef.current = layout;
     prevFiltersRef.current = filters;
-  }, [graphData]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [graphData, clusteringEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Re-layout only when layout type changes (not on graphData change)
   useEffect(() => {
@@ -217,6 +217,7 @@ export function useGraph(
     cy.nodes().forEach((node) => {
       const nodeId = node.id();
       if (nodeId === selectedNodeId) return; // Keep selected node as-is
+      if (node.isParent()) return; // Skip compound cluster containers
 
       const depth = impacted.get(nodeId);
       if (depth === undefined) {

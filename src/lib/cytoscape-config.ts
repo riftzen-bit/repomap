@@ -428,7 +428,8 @@ export function assignParents(
   }
 
   return elements.map((el) => {
-    const parent = el.data.id ? nodeToParent.get(el.data.id) : undefined;
+    // Only assign parents to node elements (edges have a source field)
+    const parent = el.data.id && !el.data.source ? nodeToParent.get(el.data.id) : undefined;
     if (parent) {
       return { ...el, data: { ...el.data, parent } };
     }
