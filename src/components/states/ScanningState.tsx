@@ -1,7 +1,9 @@
 import { useGraphStore } from "../../stores/graphStore";
+import { useScanner } from "../../hooks/useScanner";
 
 export function ScanningState() {
   const scanProgress = useGraphStore((s) => s.scanProgress);
+  const { cancelScan } = useScanner();
 
   const filesScanned = scanProgress?.filesScanned ?? 0;
   const totalFiles = scanProgress?.totalFiles ?? 0;
@@ -38,6 +40,14 @@ export function ScanningState() {
             ? `${filesScanned} of ${totalFiles} files`
             : "Discovering files\u2026"}
         </span>
+
+        {/* Cancel */}
+        <button
+          onClick={cancelScan}
+          className="rounded-lg border border-border bg-bg-elevated px-4 py-1.5 font-mono text-xs text-text-muted transition-all hover:border-text-muted hover:text-text-primary active:scale-[0.97]"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );

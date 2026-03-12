@@ -9,6 +9,8 @@ export function SearchInput() {
 
   const [results, setResults] = useState<Array<{ id: string }>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const search = useCallback(
     (term: string) => {
@@ -27,6 +29,7 @@ export function SearchInput() {
         .slice(0, 10)
         .map((n) => ({ id: n.id }));
       setResults(matches);
+      setSelectedIndex(-1);
       setShowDropdown(matches.length > 0);
     },
     [graphData],
@@ -47,18 +50,39 @@ export function SearchInput() {
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === "ArrowDown" && results.length > 0) {
+      e.preventDefault();
+      setSelectedIndex((prev) =>
+        prev < results.length - 1 ? prev + 1 : prev,
+      );
+      setShowDropdown(true);
+    }
+    if (e.key === "ArrowUp" && results.length > 0) {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    }
     if (e.key === "Enter" && results.length > 0) {
-      handleSelect(results[0].id);
+      const idx = selectedIndex >= 0 ? selectedIndex : 0;
+      handleSelect(results[idx].id);
     }
     if (e.key === "Escape") {
       setShowDropdown(false);
     }
   }
 
+  useEffect(() => {
+    if (selectedIndex < 0 || !listRef.current) return;
+    const items = listRef.current.children;
+    if (items[selectedIndex]) {
+      (items[selectedIndex] as HTMLElement).scrollIntoView({ block: "nearest" });
+    }
+  }, [selectedIndex]);
+
   function handleClear() {
     setQuery("");
     setResults([]);
     setShowDropdown(false);
+    setSelectedIndex(-1);
   }
 
   return (
@@ -113,12 +137,20 @@ export function SearchInput() {
 
       {/* Dropdown results */}
       {showDropdown && (
-        <div className="absolute top-full left-0 z-50 mt-1 w-full rounded border border-border bg-bg-elevated shadow-lg">
-          {results.map((r) => (
+        <div
+          ref={listRef}
+          className="absolute top-full left-0 z-50 mt-1 max-h-60 w-full overflow-y-auto rounded border border-border bg-bg-elevated shadow-lg"
+        >
+          {results.map((r, i) => (
             <button
               key={r.id}
               onMouseDown={() => handleSelect(r.id)}
-              className="flex w-full items-center gap-2 px-3 py-1.5 text-left font-mono text-xs text-text-secondary transition-colors duration-200 hover:bg-bg-secondary hover:text-text-primary"
+              onMouseEnter={() => setSelectedIndex(i)}
+              className={`flex w-full items-center gap-2 px-3 py-1.5 text-left font-mono text-xs transition-colors duration-200 ${
+                i === selectedIndex
+                  ? "bg-bg-surface text-text-primary"
+                  : "text-text-secondary hover:bg-bg-secondary hover:text-text-primary"
+              }`}
             >
               <svg
                 width="12"
