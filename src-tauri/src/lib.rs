@@ -1,4 +1,5 @@
 mod commands;
+mod git;
 mod scanner;
 mod parser;
 mod graph;
