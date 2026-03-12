@@ -99,16 +99,16 @@ export function getLayoutConfig(
         animate: true,
         animationDuration: 600,
         quality: "proof",
-        nodeRepulsion: 80000,
-        idealEdgeLength: 220,
+        nodeRepulsion: 120000,
+        idealEdgeLength: 300,
         edgeElasticity: 0.1,
-        gravity: 0.04,
-        gravityRange: 1.5,
-        nodeSeparation: 150,
+        gravity: 0.02,
+        gravityRange: 1.2,
+        nodeSeparation: 250,
         numIter: 5000,
         tile: true,
-        tilingPaddingVertical: 40,
-        tilingPaddingHorizontal: 40,
+        tilingPaddingVertical: 60,
+        tilingPaddingHorizontal: 60,
       };
     case "tree":
       return {
@@ -116,9 +116,9 @@ export function getLayoutConfig(
         rankDir: "TB",
         animate: true,
         animationDuration: 500,
-        rankSep: 120,
-        nodeSep: 80,
-        edgeSep: 30,
+        rankSep: 180,
+        nodeSep: 120,
+        edgeSep: 50,
       };
     case "circle":
       return {
