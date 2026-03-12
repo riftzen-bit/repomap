@@ -224,6 +224,40 @@ pub async fn get_change_frequencies(root: String) -> Result<std::collections::Ha
     Ok(counts)
 }
 
+#[derive(serde::Serialize)]
+pub struct GitBlameResponse {
+    pub author: String,
+    pub timestamp: i64,
+    pub message: String,
+}
+
+#[tauri::command]
+pub async fn get_git_blame(path: String, root: String) -> Result<GitBlameResponse, String> {
+    let root_path = std::path::Path::new(&root);
+    let output = crate::git::git_command(
+        &["log", "-1", "--format=%an%x00%at%x00%s", "--", &path],
+        root_path,
+    )?;
+
+    let trimmed = output.trim();
+    if trimmed.is_empty() {
+        return Err("File not tracked by git".to_string());
+    }
+
+    let parts: Vec<&str> = trimmed.splitn(3, '\0').collect();
+    if parts.len() < 3 {
+        return Err("Unexpected git output format".to_string());
+    }
+
+    let timestamp: i64 = parts[1].parse().map_err(|_| "Invalid timestamp".to_string())?;
+
+    Ok(GitBlameResponse {
+        author: parts[0].to_string(),
+        timestamp,
+        message: parts[2].to_string(),
+    })
+}
+
 /// Heuristic: detect common entry point filenames.
 fn is_entry_point(relative_path: &str, language: &str) -> bool {
     let filename = Path::new(relative_path)

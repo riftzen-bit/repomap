@@ -65,3 +65,9 @@ export interface Filters {
   minConnections: number;
   maxDepth: number | null;
 }
+
+export interface GitBlameInfo {
+  author: string;
+  timestamp: number;
+  message: string;
+}

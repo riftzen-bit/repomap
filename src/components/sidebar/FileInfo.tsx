@@ -4,6 +4,7 @@ import { getLanguageColor } from "../../lib/colors";
 import { Badge } from "../common/Badge";
 import { useGraphStore } from "../../stores/graphStore";
 import { getImpactedNodes } from "../../lib/graph-utils";
+import { GitBlame } from "./GitBlame";
 
 interface FileInfoProps {
   node: Node;
@@ -66,6 +67,9 @@ export function FileInfo({ node, insights }: FileInfoProps) {
         <MetricRow label="Imported by" value={node.importedBy.length} />
         <MetricRow label="Symbols" value={node.symbols.length} />
       </div>
+
+      {/* Git Blame */}
+      <GitBlame filePath={node.id} />
 
       {/* Impact Analysis */}
       <ImpactToggle node={node} />

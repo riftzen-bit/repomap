@@ -24,6 +24,7 @@ pub fn run() {
             commands::export_json,
             commands::export_mermaid,
             commands::get_change_frequencies,
+            commands::get_git_blame,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
