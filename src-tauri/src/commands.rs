@@ -9,7 +9,7 @@ use tauri::Emitter;
 use crate::graph::types::{FilePreview, GraphData, Node, ScanProgress};
 use crate::graph::GraphBuilder;
 use crate::parser;
-use crate::scanner;
+use crate::scanner::{self, MAX_FILE_SIZE};
 
 static CANCEL_FLAG: AtomicBool = AtomicBool::new(false);
 
@@ -321,9 +321,6 @@ fn normalize_path(path: &str) -> String {
     }
     parts.join("/")
 }
-
-/// Maximum file size to parse (1 MiB). Files larger than this are skipped.
-const MAX_FILE_SIZE: u64 = 1_024 * 1_024;
 
 /// Quick check for binary content: look for NUL bytes in the first 8 KiB.
 fn is_binary_content(buf: &[u8]) -> bool {

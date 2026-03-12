@@ -7,9 +7,7 @@ use walkdir::WalkDir;
 
 use super::detector::detect_language;
 use super::ignore::IgnoreRules;
-
-/// Maximum file size to include in scan results (1 MiB).
-const MAX_FILE_SIZE: u64 = 1_024 * 1_024;
+use super::MAX_FILE_SIZE;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
