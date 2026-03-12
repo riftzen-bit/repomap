@@ -12,6 +12,7 @@ export function ControlsBar() {
   const graphData = useGraphStore((s) => s.graphData);
   const filters = useGraphStore((s) => s.filters);
   const updateFilters = useGraphStore((s) => s.updateFilters);
+  const projectRoot = useGraphStore((s) => s.projectRoot);
   const { startScan } = useScanner();
 
   const languages = graphData
@@ -58,6 +59,32 @@ export function ControlsBar() {
         </svg>
         Open Folder
       </button>
+
+      {/* Rescan project */}
+      {projectRoot && (
+        <button
+          onClick={() => startScan(projectRoot)}
+          title="Rescan project"
+          className="flex items-center gap-1.5 rounded border border-border bg-bg-elevated px-3 py-1.5 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-accent-primary hover:text-accent-primary"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="23 4 23 10 17 10" />
+            <polyline points="1 20 1 14 7 14" />
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10" />
+            <path d="M20.49 15a9 9 0 0 1-14.85 3.36L1 14" />
+          </svg>
+          Rescan
+        </button>
+      )}
 
       {/* Divider */}
       <div className="h-5 w-px bg-border" />

@@ -1,8 +1,49 @@
+import { useMemo } from "react";
 import { useGraphStore } from "../../stores/graphStore";
 import { getLanguageColor } from "../../lib/colors";
 
 export function InsightsBar() {
   const graphData = useGraphStore((s) => s.graphData);
+  const filters = useGraphStore((s) => s.filters);
+
+  const filtersActive =
+    filters.languages.length > 0 ||
+    filters.directories.length > 0 ||
+    filters.minConnections > 0;
+
+  const visibleCount = useMemo(() => {
+    if (!graphData || !filtersActive) return 0;
+
+    const connectionCounts = new Map<string, number>();
+    for (const edge of graphData.edges) {
+      connectionCounts.set(
+        edge.source,
+        (connectionCounts.get(edge.source) ?? 0) + 1,
+      );
+      connectionCounts.set(
+        edge.target,
+        (connectionCounts.get(edge.target) ?? 0) + 1,
+      );
+    }
+
+    return graphData.nodes.filter((node) => {
+      if (
+        filters.languages.length > 0 &&
+        !filters.languages.includes(node.language)
+      )
+        return false;
+
+      if (filters.directories.length > 0) {
+        const topDir = node.id.includes("/") ? node.id.split("/")[0] : ".";
+        if (!filters.directories.includes(topDir)) return false;
+      }
+
+      if ((connectionCounts.get(node.id) ?? 0) < filters.minConnections)
+        return false;
+
+      return true;
+    }).length;
+  }, [graphData, filters, filtersActive]);
 
   if (!graphData) return null;
 
@@ -10,6 +51,16 @@ export function InsightsBar() {
 
   return (
     <div className="flex h-7 shrink-0 items-center gap-4 border-t border-border bg-bg-secondary px-3">
+      {/* Filtered count */}
+      {filtersActive && (
+        <span className="font-mono text-[10px] text-text-muted">
+          Showing{" "}
+          <span className="text-text-secondary">{visibleCount}</span>
+          {" "}of{" "}
+          <span className="text-text-secondary">{insights.totalFiles}</span>
+        </span>
+      )}
+
       {/* Total files */}
       <Metric label="Files" value={insights.totalFiles} />
 
