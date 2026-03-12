@@ -36,7 +36,7 @@ export function useScanner() {
         const unlistenComplete = await listen<GraphData>(
           "scan:complete",
           (event) => {
-            setGraphData(event.payload);
+            setGraphData(event.payload, path);
             cleanup();
           },
         );
@@ -63,7 +63,8 @@ export function useScanner() {
     [cleanup, reset, setScanStatus, updateScanProgress, setGraphData, setError],
   );
 
-  const cancelScan = useCallback(() => {
+  const cancelScan = useCallback(async () => {
+    await invoke("cancel_scan").catch(() => {});
     cleanup();
     reset();
   }, [cleanup, reset]);

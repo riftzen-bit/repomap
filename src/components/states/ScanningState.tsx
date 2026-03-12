@@ -10,17 +10,17 @@ export function ScanningState() {
   return (
     <div className="flex h-full w-full items-center justify-center grain-bg">
       <div className="relative z-10 flex w-80 flex-col items-center gap-6">
-        {/* Pulsing label */}
-        <div className="flex items-center gap-2 animate-pulse-slow">
+        {/* Spinner dot */}
+        <div className="flex items-center gap-2.5 animate-pulse-slow">
           <span className="inline-block h-2 w-2 rounded-full bg-accent-primary" />
-          <span className="font-mono text-sm text-accent-primary">
+          <span className="text-sm font-medium text-text-primary">
             Scanning
           </span>
         </div>
 
         {/* Progress bar */}
         <div className="w-full">
-          <div className="h-1 w-full overflow-hidden rounded-full bg-bg-elevated">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-bg-surface">
             {totalFiles > 0 ? (
               <div
                 className="h-full rounded-full bg-accent-primary transition-all duration-300 ease-out"
@@ -33,13 +33,11 @@ export function ScanningState() {
         </div>
 
         {/* Counter */}
-        <div className="flex flex-col items-center gap-1">
-          <span className="font-mono text-xs text-text-secondary">
-            {totalFiles > 0
-              ? `${filesScanned} / ${totalFiles} files`
-              : "Discovering files..."}
-          </span>
-        </div>
+        <span className="font-mono text-xs text-text-muted">
+          {totalFiles > 0
+            ? `${filesScanned} of ${totalFiles} files`
+            : "Discovering files\u2026"}
+        </span>
       </div>
     </div>
   );

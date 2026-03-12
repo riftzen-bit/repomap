@@ -18,9 +18,13 @@ export function ControlsBar() {
     : [];
 
   async function handleOpenFolder() {
-    const selected = await open({ directory: true, multiple: false });
-    if (typeof selected === "string") {
-      startScan(selected);
+    try {
+      const selected = await open({ directory: true, multiple: false });
+      if (typeof selected === "string") {
+        startScan(selected);
+      }
+    } catch {
+      // Dialog dismissed or unavailable -- no action needed
     }
   }
 

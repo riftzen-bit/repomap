@@ -41,9 +41,27 @@ pub async fn scan_project(window: tauri::Window, path: String) -> Result<(), Str
                 return None;
             }
 
-            let content = match fs::read_to_string(&scanned.path) {
-                Ok(c) => c,
+            // Skip files that are too large
+            let metadata = match fs::metadata(&scanned.path) {
+                Ok(m) => m,
                 Err(_) => return None,
+            };
+            if metadata.len() > MAX_FILE_SIZE {
+                return None;
+            }
+
+            // Read raw bytes first to detect binary content
+            let raw = match fs::read(&scanned.path) {
+                Ok(r) => r,
+                Err(_) => return None,
+            };
+            if is_binary_content(&raw) {
+                return None;
+            }
+
+            let content = match String::from_utf8(raw) {
+                Ok(s) => s,
+                Err(_) => return None, // not valid UTF-8, skip
             };
 
             let result = parser::parse_file(&content, &scanned.language);
@@ -289,7 +307,7 @@ fn resolve_import(
     None
 }
 
-/// Normalize a path by resolving . and .. components.
+/// Normalize a path by resolving `.` and `..` components and stripping trailing slashes.
 fn normalize_path(path: &str) -> String {
     let mut parts: Vec<&str> = Vec::new();
     for part in path.split('/') {
@@ -302,6 +320,15 @@ fn normalize_path(path: &str) -> String {
         }
     }
     parts.join("/")
+}
+
+/// Maximum file size to parse (1 MiB). Files larger than this are skipped.
+const MAX_FILE_SIZE: u64 = 1_024 * 1_024;
+
+/// Quick check for binary content: look for NUL bytes in the first 8 KiB.
+fn is_binary_content(buf: &[u8]) -> bool {
+    let check_len = buf.len().min(8192);
+    buf[..check_len].contains(&0)
 }
 
 /// Get file extensions to try for extensionless imports.

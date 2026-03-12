@@ -6,12 +6,12 @@ export function ErrorState() {
 
   return (
     <div className="flex h-full w-full items-center justify-center grain-bg">
-      <div className="relative z-10 flex w-96 flex-col items-center gap-6">
-        {/* Icon */}
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-accent-danger/30 bg-accent-danger/5">
+      <div className="relative z-10 flex w-96 flex-col items-center gap-5 text-center">
+        {/* Error icon */}
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent-danger/10">
           <svg
-            width="24"
-            height="24"
+            width="20"
+            height="20"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -26,20 +26,18 @@ export function ErrorState() {
           </svg>
         </div>
 
-        {/* Message */}
-        <div className="flex flex-col items-center gap-2 text-center">
-          <h2 className="font-mono text-sm font-semibold text-accent-danger">
-            Scan Failed
+        <div className="flex flex-col gap-1.5">
+          <h2 className="text-sm font-semibold text-text-primary">
+            Scan failed
           </h2>
-          <p className="font-mono text-xs leading-relaxed text-text-secondary">
+          <p className="text-xs leading-relaxed text-text-secondary">
             {errorMessage ?? "An unknown error occurred."}
           </p>
         </div>
 
-        {/* Retry */}
         <button
           onClick={reset}
-          className="rounded border border-border bg-bg-elevated px-4 py-2 font-mono text-xs text-text-secondary transition-all duration-300 hover:border-text-muted hover:text-text-primary"
+          className="rounded-lg border border-border bg-bg-elevated px-4 py-2 text-xs font-medium text-text-secondary transition-all hover:border-text-muted hover:text-text-primary active:scale-[0.97]"
         >
           Try Again
         </button>

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { codeToHtml } from "shiki";
+import { useGraphStore } from "../../stores/graphStore";
 import type { FilePreview } from "../../lib/types";
 
 interface CodePreviewProps {
@@ -12,12 +13,15 @@ const INITIAL_LINES = 50;
 const LOAD_MORE_LINES = 50;
 
 export function CodePreview({ filePath, language }: CodePreviewProps) {
+  const projectRoot = useGraphStore((s) => s.projectRoot);
   const [html, setHtml] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [visibleLines, setVisibleLines] = useState(INITIAL_LINES);
   const [totalLines, setTotalLines] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const absolutePath = projectRoot ? `${projectRoot}/${filePath}` : filePath;
 
   useEffect(() => {
     let cancelled = false;
@@ -30,7 +34,8 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
 
       try {
         const preview = await invoke<FilePreview>("get_file_preview", {
-          path: filePath,
+          path: absolutePath,
+          maxLines: 0,
         });
 
         if (cancelled) return;
@@ -62,12 +67,13 @@ export function CodePreview({ filePath, language }: CodePreviewProps) {
     return () => {
       cancelled = true;
     };
-  }, [filePath, language]);
+  }, [absolutePath, language]);
 
   async function handleShowMore() {
     try {
       const preview = await invoke<FilePreview>("get_file_preview", {
-        path: filePath,
+        path: absolutePath,
+        maxLines: 0,
       });
 
       const allLines = preview.content.split("\n");

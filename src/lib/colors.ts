@@ -1,16 +1,16 @@
 const LANGUAGE_COLORS: Record<string, string> = {
-  typescript: "#6b9ec4",
-  tsx: "#6b9ec4",
-  javascript: "#c9a84c",
-  jsx: "#c9a84c",
-  go: "#7bae7f",
-  rust: "#d4915c",
-  python: "#c4a64c",
-  java: "#8b7ec4",
-  ruby: "#c45c5c",
-  php: "#8b7ec4",
-  c: "#a89f93",
-  cpp: "#a89f93",
+  typescript: "#5da4e8",
+  tsx: "#5da4e8",
+  javascript: "#ecd24a",
+  jsx: "#ecd24a",
+  go: "#6ad4a0",
+  rust: "#f08040",
+  python: "#f7d44f",
+  java: "#b07ee8",
+  ruby: "#e85050",
+  php: "#9b8fef",
+  c: "#c8c0b4",
+  cpp: "#c8c0b4",
 };
 
 export function getLanguageColor(language: string): string {

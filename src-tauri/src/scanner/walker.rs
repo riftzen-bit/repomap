@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{self, File};
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
@@ -7,6 +7,9 @@ use walkdir::WalkDir;
 
 use super::detector::detect_language;
 use super::ignore::IgnoreRules;
+
+/// Maximum file size to include in scan results (1 MiB).
+const MAX_FILE_SIZE: u64 = 1_024 * 1_024;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -43,6 +46,15 @@ pub fn scan_files(root: &Path) -> Result<Vec<ScannedFile>, String> {
         }
 
         let path = entry.path();
+
+        // Skip files that are too large
+        let file_size = match fs::metadata(path) {
+            Ok(m) => m.len(),
+            Err(_) => continue,
+        };
+        if file_size > MAX_FILE_SIZE {
+            continue;
+        }
 
         let language = match detect_language(path) {
             Some(lang) => lang,

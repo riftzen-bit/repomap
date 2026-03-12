@@ -38,7 +38,11 @@ fn detect_by_shebang(path: &Path) -> Option<String> {
     let file = File::open(path).ok()?;
     let mut reader = BufReader::new(file);
     let mut first_line = String::new();
-    reader.read_line(&mut first_line).ok()?;
+    // Limit read to avoid consuming a huge binary line
+    let bytes_read = reader.read_line(&mut first_line).ok()?;
+    if bytes_read == 0 || bytes_read > 256 {
+        return None;
+    }
 
     if !first_line.starts_with("#!") {
         return None;

@@ -1,4 +1,7 @@
+import { useEffect } from "react";
+import { open } from "@tauri-apps/plugin-dialog";
 import { useGraphStore } from "./stores/graphStore";
+import { useScanner } from "./hooks/useScanner";
 import { TitleBar } from "./components/layout/TitleBar";
 import { ControlsBar } from "./components/layout/ControlsBar";
 import { InsightsBar } from "./components/layout/InsightsBar";
@@ -6,10 +9,31 @@ import { EmptyState } from "./components/states/EmptyState";
 import { ScanningState } from "./components/states/ScanningState";
 import { ErrorState } from "./components/states/ErrorState";
 import { GraphCanvas } from "./components/graph/GraphCanvas";
+import { Sidebar } from "./components/sidebar/Sidebar";
 
 export function App() {
   const scanStatus = useGraphStore((s) => s.scanStatus);
   const hasGraph = scanStatus === "complete";
+  const { startScan } = useScanner();
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.ctrlKey && e.key === "o") {
+        e.preventDefault();
+        open({ directory: true, multiple: false })
+          .then((selected) => {
+            if (typeof selected === "string") {
+              startScan(selected);
+            }
+          })
+          .catch(() => {
+            // Dialog dismissed or unavailable
+          });
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [startScan]);
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-bg-primary">
@@ -36,13 +60,7 @@ function MainContent() {
   return (
     <>
       <GraphCanvas />
-      <aside className="flex w-80 shrink-0 flex-col border-l border-border bg-bg-secondary">
-        <div className="flex h-full items-center justify-center">
-          <span className="font-mono text-xs text-text-muted">
-            Click a node to inspect
-          </span>
-        </div>
-      </aside>
+      <Sidebar />
     </>
   );
 }

@@ -119,7 +119,7 @@ function ConnectionSection({
               </svg>
 
               <span className="truncate font-mono text-[11px] text-text-secondary transition-colors duration-200 group-hover:text-text-primary">
-                {entry.node.path}
+                {entry.node.id}
               </span>
 
               {entry.isCircular && (

@@ -2,18 +2,18 @@ import type cytoscape from "cytoscape";
 import type { Node, Edge } from "./types";
 import { getLanguageColor } from "./colors";
 
-type NodeSize = 30 | 40 | 50 | 60;
+type NodeSize = 40 | 55 | 70 | 85;
 type NodeShape = "diamond" | "triangle" | "ellipse";
 
 function getNodeSize(connectionCount: number): NodeSize {
-  if (connectionCount <= 1) return 30;
-  if (connectionCount <= 5) return 40;
-  if (connectionCount <= 9) return 50;
-  return 60;
+  if (connectionCount <= 1) return 40;
+  if (connectionCount <= 5) return 55;
+  if (connectionCount <= 9) return 70;
+  return 85;
 }
 
 function getNodeShape(node: Node): NodeShape {
-  const name = node.filename.toLowerCase();
+  const name = node.label.split("/").pop()?.toLowerCase() ?? "";
   if (
     name === "index.ts" ||
     name === "index.tsx" ||
@@ -53,12 +53,12 @@ export function getNodeStyle(
   isOrphan: boolean,
   isCircular: boolean,
 ): NodeStyleData {
-  const color = isOrphan ? "#6b6158" : getLanguageColor(node.language);
+  const color = isOrphan ? "#8a8078" : getLanguageColor(node.language);
   const size = getNodeSize(connectionCount);
   const shape = getNodeShape(node);
-  const opacity = isOrphan ? 0.5 : 1;
-  const borderColor = isCircular ? "#c45c5c" : color;
-  const borderWidth = isCircular ? 3 : 1;
+  const opacity = isOrphan ? 0.6 : 1;
+  const borderColor = isCircular ? "#ff5555" : color;
+  const borderWidth = isCircular ? 4 : 2;
 
   return { color, size, shape, opacity, borderColor, borderWidth };
 }
@@ -74,12 +74,12 @@ export function getEdgeStyle(
   isSelected: boolean,
 ): EdgeStyleData {
   if (isSelected) {
-    return { lineColor: "#d4915c", width: 2, lineStyle: "solid" };
+    return { lineColor: "#f0a050", width: 3, lineStyle: "solid" };
   }
   if (isCircular) {
-    return { lineColor: "#c45c5c", width: 2, lineStyle: "dashed" };
+    return { lineColor: "#ff5555", width: 2.5, lineStyle: "dashed" };
   }
-  return { lineColor: "#3d362d", width: 1, lineStyle: "solid" };
+  return { lineColor: "#5a5348", width: 1.5, lineStyle: "solid" };
 }
 
 interface LayoutConfig {
@@ -97,9 +97,18 @@ export function getLayoutConfig(
       return {
         name: "fcose",
         animate: true,
-        animationDuration: 500,
-        nodeRepulsion: 8000,
-        idealEdgeLength: 100,
+        animationDuration: 600,
+        quality: "proof",
+        nodeRepulsion: 80000,
+        idealEdgeLength: 220,
+        edgeElasticity: 0.1,
+        gravity: 0.04,
+        gravityRange: 1.5,
+        nodeSeparation: 150,
+        numIter: 5000,
+        tile: true,
+        tilingPaddingVertical: 40,
+        tilingPaddingHorizontal: 40,
       };
     case "tree":
       return {
@@ -107,12 +116,16 @@ export function getLayoutConfig(
         rankDir: "TB",
         animate: true,
         animationDuration: 500,
+        rankSep: 120,
+        nodeSep: 80,
+        edgeSep: 30,
       };
     case "circle":
       return {
         name: "circle",
         animate: true,
         animationDuration: 500,
+        spacingFactor: 2.0,
       };
   }
 }
@@ -153,12 +166,12 @@ export function buildCytoscapeElements(
     return {
       data: {
         id: node.id,
-        label: node.filename,
-        path: node.path,
+        label: node.label.split("/").pop() ?? node.label,
+        path: node.id,
         language: node.language,
-        fileSize: node.size,
-        importCount: node.importCount,
-        exportCount: node.exportCount,
+        fileSize: node.lines,
+        importCount: node.imports.length,
+        exportCount: node.importedBy.length,
         symbolCount: node.symbols.length,
         nodeColor: style.color,
         nodeSize: style.size,
@@ -173,7 +186,7 @@ export function buildCytoscapeElements(
 
   const edgeElements: cytoscape.ElementDefinition[] = edges.map((edge) => {
     const edgeKey = `${edge.source}->${edge.target}`;
-    const isCircular = circularEdgePairs.has(edgeKey);
+    const isCircular = edge.isCircular || circularEdgePairs.has(edgeKey);
 
     const edgeStyle = getEdgeStyle(isCircular, false);
 
@@ -182,7 +195,6 @@ export function buildCytoscapeElements(
         id: edgeKey,
         source: edge.source,
         target: edge.target,
-        symbols: edge.symbols,
         lineColor: edgeStyle.lineColor,
         lineWidth: edgeStyle.width,
         lineStyle: edgeStyle.lineStyle,
@@ -218,16 +230,18 @@ const nodeBaseStyle: Record<string, unknown> = {
   opacity: "data(nodeOpacity)",
   "border-color": "data(borderColor)",
   "border-width": "data(borderWidth)",
-  "font-size": "10px",
-  "font-family": "JetBrains Mono, monospace",
-  color: "#e8e0d4",
+  "font-size": "12px",
+  "font-family": "Fira Code, monospace",
+  color: "#f5f0e8",
   "text-valign": "bottom",
   "text-halign": "center",
-  "text-margin-y": 6,
-  "text-outline-color": "#1a1714",
-  "text-outline-width": 2,
-  "min-zoomed-font-size": 8,
-  "overlay-padding": 4,
+  "text-margin-y": 8,
+  "text-outline-color": "#0d0d0c",
+  "text-outline-width": 3,
+  "min-zoomed-font-size": 6,
+  "overlay-padding": 6,
+  "text-max-width": "120px",
+  "text-wrap": "ellipsis",
 };
 
 const edgeBaseStyle: Record<string, unknown> = {
@@ -237,8 +251,8 @@ const edgeBaseStyle: Record<string, unknown> = {
   "curve-style": "bezier",
   "target-arrow-shape": "triangle",
   "target-arrow-color": "data(lineColor)",
-  "arrow-scale": 0.8,
-  opacity: 0.6,
+  "arrow-scale": 1.0,
+  opacity: 0.8,
 };
 
 export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
@@ -249,40 +263,40 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
   {
     selector: "node.circular",
     style: {
-      "border-color": "#c45c5c",
-      "border-width": 3,
+      "border-color": "#ff5555",
+      "border-width": 4,
       "border-opacity": 1,
     } as cytoscape.Css.Node,
   },
   {
     selector: "node.orphan",
     style: {
-      "background-color": "#6b6158",
-      opacity: 0.5,
+      "background-color": "#8a8078",
+      opacity: 0.6,
     } as cytoscape.Css.Node,
   },
   {
     selector: "node.highlighted",
     style: {
-      "border-color": "#d4915c",
-      "border-width": 2,
+      "border-color": "#f0a050",
+      "border-width": 3,
       "border-opacity": 1,
     } as cytoscape.Css.Node,
   },
   {
     selector: "node:selected",
     style: {
-      "border-color": "#d4915c",
-      "border-width": 3,
+      "border-color": "#f0a050",
+      "border-width": 4,
       "border-opacity": 1,
-      "overlay-color": "#d4915c",
-      "overlay-opacity": 0.1,
+      "overlay-color": "#f0a050",
+      "overlay-opacity": 0.15,
     } as cytoscape.Css.Node,
   },
   {
     selector: "node.dimmed",
     style: {
-      opacity: 0.15,
+      opacity: 0.12,
     } as cytoscape.Css.Node,
   },
   {
@@ -300,25 +314,25 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
   {
     selector: "edge.highlighted",
     style: {
-      "line-color": "#d4915c",
-      "target-arrow-color": "#d4915c",
-      width: 2,
+      "line-color": "#f0a050",
+      "target-arrow-color": "#f0a050",
+      width: 3,
       opacity: 1,
     } as cytoscape.Css.Edge,
   },
   {
     selector: "edge.dimmed",
     style: {
-      opacity: 0.08,
+      opacity: 0.06,
     } as cytoscape.Css.Edge,
   },
   {
     selector: "edge[?isCircular]",
     style: {
-      "line-color": "#c45c5c",
-      "target-arrow-color": "#c45c5c",
+      "line-color": "#ff5555",
+      "target-arrow-color": "#ff5555",
       "line-style": "dashed",
-      width: 2,
+      width: 2.5,
     } as cytoscape.Css.Edge,
   },
 ];

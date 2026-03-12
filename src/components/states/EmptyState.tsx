@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
 import { useScanner } from "../../hooks/useScanner";
 import {
@@ -11,91 +12,146 @@ const LANGUAGES: [string, () => React.JSX.Element][] = [
   ["TypeScript", TypeScriptIcon],
   ["Python", PythonIcon],
   ["Java", JavaIcon],
-  ["C / C++", CppIcon],
+  ["C++", CppIcon],
   ["Ruby", RubyIcon],
   ["PHP", PhpIcon],
 ];
 
+const FEATURES = [
+  { icon: "graph", label: "Dependency graph", detail: "Force, tree & circle layouts" },
+  { icon: "cycle", label: "Circular imports", detail: "Auto-detected & highlighted" },
+  { icon: "export", label: "Export", detail: "JSON & Mermaid diagrams" },
+];
+
+function FeatureIcon({ type }: { type: string }) {
+  const cls = "text-text-muted";
+  if (type === "graph") return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={cls}>
+      <circle cx="5" cy="6" r="2" /><circle cx="19" cy="6" r="2" /><circle cx="12" cy="18" r="2" />
+      <line x1="5" y1="8" x2="12" y2="16" /><line x1="19" y1="8" x2="12" y2="16" />
+    </svg>
+  );
+  if (type === "cycle") return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={cls}>
+      <path d="M21 12a9 9 0 1 1-6.22-8.56" /><polyline points="21 3 21 9 15 9" />
+    </svg>
+  );
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className={cls}>
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  );
+}
+
 export function EmptyState() {
   const { startScan } = useScanner();
+  const [showHelp, setShowHelp] = useState(false);
 
   async function handleOpen() {
-    const selected = await open({ directory: true, multiple: false });
-    if (typeof selected === "string") {
-      startScan(selected);
+    try {
+      const selected = await open({ directory: true, multiple: false });
+      if (typeof selected === "string") {
+        startScan(selected);
+      }
+    } catch {
+      // Dialog dismissed or unavailable -- no action needed
     }
   }
 
   return (
-    <div className="flex h-full w-full grain-bg">
-      <div className="relative z-10 flex h-full w-full">
-        {/* Left — large asymmetric typography */}
-        <div className="flex flex-1 flex-col justify-end p-12 pb-24">
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-text-muted mb-6">
-            Codebase Visualizer
-          </p>
-          <h1 className="font-sans text-[72px] font-light leading-[0.9] tracking-[-0.04em] text-text-primary">
-            Repo
-            <br />
-            <span className="text-accent-primary">Map</span>
-          </h1>
-          <div className="mt-8 h-px w-24 bg-border" />
-          <p className="mt-6 max-w-xs font-sans text-sm leading-relaxed text-text-secondary">
-            Drop a project folder to visualize its dependency graph,
-            find circular imports, and understand the architecture at a glance.
-          </p>
+    <div className="flex h-full w-full overflow-hidden grain-bg">
+      <div className="relative z-10 flex h-full w-full flex-col items-center justify-center gap-6 overflow-y-auto px-4">
 
-          <button
-            onClick={handleOpen}
-            className="mt-10 flex w-fit items-center gap-3 border border-border bg-bg-elevated px-5 py-3 font-mono text-xs tracking-wide text-text-primary transition-all duration-200 hover:border-accent-primary hover:text-accent-primary active:scale-[0.98]"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
+        {/* Icon cluster */}
+        <div className="flex flex-wrap items-center justify-center gap-3 max-w-[340px]">
+          {LANGUAGES.map(([lang, IconComponent]) => (
+            <div
+              key={lang}
+              className="flex h-12 w-12 items-center justify-center rounded-xl bg-bg-elevated border border-border/50"
+              title={lang}
             >
-              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-              <polyline points="13 2 13 9 20 9" />
-            </svg>
-            OPEN PROJECT
-          </button>
+              <IconComponent />
+            </div>
+          ))}
         </div>
 
-        {/* Right — vertical info strip */}
-        <div className="flex w-64 flex-col justify-between border-l border-border p-8">
-          <div>
-            <p className="font-mono text-[10px] text-text-muted">v0.1.0</p>
-          </div>
+        {/* Title block */}
+        <div className="flex flex-col items-center gap-2 text-center">
+          <h1 className="text-[24px] font-semibold tracking-[-0.02em] text-text-primary">
+            RepoMap
+          </h1>
+          <p className="max-w-xs text-[13px] font-light leading-relaxed text-text-secondary">
+            Visualize dependencies, trace circular imports,
+            and understand your codebase architecture.
+          </p>
+        </div>
 
-          <div className="flex flex-col gap-3">
-            <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-text-muted">
-              Languages
-            </p>
-            <div className="flex flex-col gap-2">
-              {LANGUAGES.map(([lang, IconComponent]) => (
-                <div key={lang} className="flex items-center gap-3">
-                  <span className="shrink-0 opacity-80">
-                    <IconComponent />
-                  </span>
-                  <span className="font-mono text-[11px] text-text-secondary">
-                    {lang}
-                  </span>
+        {/* Primary action */}
+        <button
+          onClick={handleOpen}
+          className="flex items-center gap-2.5 rounded-lg bg-accent-primary px-5 py-2.5 text-[13px] font-medium text-bg-primary transition-all duration-150 hover:brightness-110 active:scale-[0.97]"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          Open Project
+        </button>
+
+        {/* Shortcut hint */}
+        <div className="flex items-center gap-1.5 text-text-muted">
+          <kbd className="rounded bg-bg-surface px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+            Ctrl
+          </kbd>
+          <span className="text-[10px]">+</span>
+          <kbd className="rounded bg-bg-surface px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+            O
+          </kbd>
+          <span className="ml-1 text-[11px] text-text-muted">to open</span>
+        </div>
+
+        {/* Help — inline, compact, part of the flow */}
+        {!showHelp ? (
+          <button
+            onClick={() => setShowHelp(true)}
+            className="mt-4 flex items-center gap-1.5 text-[11px] text-text-muted/60 transition-colors hover:text-text-muted"
+          >
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            How it works
+          </button>
+        ) : (
+          <div className="mt-2 flex flex-col items-center gap-3 w-full max-w-lg">
+            {/* Feature list — compact rows, not cards */}
+            <div className="flex w-full flex-col divide-y divide-border/50 rounded-lg border border-border bg-bg-elevated">
+              {FEATURES.map((f) => (
+                <div key={f.label} className="flex items-center gap-3 px-4 py-2.5 min-w-0">
+                  <span className="shrink-0"><FeatureIcon type={f.icon} /></span>
+                  <span className="truncate text-[12px] font-medium text-text-primary">{f.label}</span>
+                  <span className="ml-auto hidden shrink-0 text-[11px] text-text-muted sm:block">{f.detail}</span>
                 </div>
               ))}
             </div>
-          </div>
 
-          <p className="font-mono text-[10px] leading-relaxed text-text-muted">
-            See your code.
-            <br />
-            Understand your
-            <br />
-            architecture.
-          </p>
-        </div>
+            <button
+              onClick={() => setShowHelp(false)}
+              className="text-[11px] text-text-muted/50 transition-colors hover:text-text-muted"
+            >
+              Hide
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

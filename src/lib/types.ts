@@ -1,38 +1,35 @@
 export type SymbolKind =
   | "function"
   | "class"
+  | "struct"
   | "interface"
   | "type"
-  | "enum"
-  | "constant"
-  | "variable"
-  | "method"
-  | "trait"
-  | "struct"
-  | "module";
+  | "const";
 
 export interface Symbol {
   name: string;
   kind: SymbolKind;
   line: number;
-  exported: boolean;
 }
 
 export interface Node {
   id: string;
-  path: string;
-  filename: string;
+  label: string;
   language: string;
-  size: number;
+  lines: number;
   symbols: Symbol[];
-  importCount: number;
-  exportCount: number;
+  imports: string[];
+  importedBy: string[];
+  isEntryPoint: boolean;
+  isConfig: boolean;
+  isOrphan: boolean;
+  isHub: boolean;
 }
 
 export interface Edge {
   source: string;
   target: string;
-  symbols: string[];
+  isCircular: boolean;
 }
 
 export interface Insights {
@@ -48,8 +45,6 @@ export interface GraphData {
   nodes: Node[];
   edges: Edge[];
   insights: Insights;
-  rootDir: string;
-  projectName: string;
 }
 
 export interface ScanProgress {
@@ -59,7 +54,7 @@ export interface ScanProgress {
 }
 
 export interface FilePreview {
-  path: string;
   content: string;
   language: string;
+  lineCount: number;
 }
