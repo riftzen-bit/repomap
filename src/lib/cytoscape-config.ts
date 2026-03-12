@@ -413,6 +413,166 @@ export const cytoscapeStylesheet: cytoscape.StylesheetStyle[] = [
   },
 ];
 
+export function buildCytoscapeStylesheet(
+  colors: Record<string, string>,
+): cytoscape.StylesheetStyle[] {
+  const themedNodeBaseStyle: Record<string, unknown> = {
+    ...nodeBaseStyle,
+    color: colors.textPrimary,
+    "text-outline-color": colors.bgPrimary,
+  };
+
+  return [
+    {
+      selector: "node",
+      style: themedNodeBaseStyle as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.circular",
+      style: {
+        "border-color": colors.accentDanger,
+        "border-width": 4,
+        "border-opacity": 1,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.orphan",
+      style: {
+        "background-color": colors.textMuted,
+        opacity: 0.6,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.highlighted",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 3,
+        "border-opacity": 1,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node:selected",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 4,
+        "border-opacity": 1,
+        "overlay-color": colors.accentPrimary,
+        "overlay-opacity": 0.15,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.dimmed",
+      style: {
+        opacity: 0.12,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.search-match",
+      style: {
+        "border-color": colors.accentWarning,
+        "border-width": 3,
+        "border-opacity": 1,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.impact-1",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 4,
+        "border-opacity": 1,
+        opacity: 1,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.impact-2",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 3,
+        "border-opacity": 0.7,
+        opacity: 0.85,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.impact-3",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 2,
+        "border-opacity": 0.5,
+        opacity: 0.7,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.impact-far",
+      style: {
+        "border-color": colors.accentPrimary,
+        "border-width": 2,
+        "border-opacity": 0.3,
+        opacity: 0.55,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "node.impact-none",
+      style: {
+        opacity: 0.1,
+      } as cytoscape.Css.Node,
+    },
+    {
+      selector: "edge.impact-none",
+      style: {
+        opacity: 0.05,
+      } as cytoscape.Css.Edge,
+    },
+    {
+      selector: "node:parent",
+      style: {
+        "background-color": colors.bgSurface,
+        "background-opacity": 0.4,
+        "border-color": colors.border,
+        "border-width": 1,
+        "border-style": "dashed",
+        "border-opacity": 0.5,
+        label: "data(label)",
+        "font-size": "10px",
+        "font-family": "Fira Code, monospace",
+        color: colors.textMuted,
+        "text-valign": "top",
+        "text-halign": "center",
+        "text-margin-y": -6,
+        padding: "20px",
+        shape: "roundrectangle",
+      } as unknown as cytoscape.Css.Node,
+    },
+    {
+      selector: "edge",
+      style: edgeBaseStyle as cytoscape.Css.Edge,
+    },
+    {
+      selector: "edge.highlighted",
+      style: {
+        "line-color": colors.accentPrimary,
+        "target-arrow-color": colors.accentPrimary,
+        width: 3,
+        opacity: 1,
+      } as cytoscape.Css.Edge,
+    },
+    {
+      selector: "edge.dimmed",
+      style: {
+        opacity: 0.06,
+      } as cytoscape.Css.Edge,
+    },
+    {
+      selector: "edge[?isCircular]",
+      style: {
+        "line-color": colors.accentDanger,
+        "target-arrow-color": colors.accentDanger,
+        "line-style": "dashed",
+        width: 2.5,
+      } as cytoscape.Css.Edge,
+    },
+  ];
+}
+
 export function buildCompoundElements(
   clusters: Array<{ id: string; label: string; nodeIds: string[] }>,
 ): cytoscape.ElementDefinition[] {

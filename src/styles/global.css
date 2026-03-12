@@ -61,6 +61,22 @@
   --font-sans: "Outfit", system-ui, sans-serif;
 }
 
+[data-theme="light"] {
+  --color-bg-primary: #f8f7f5;
+  --color-bg-secondary: #efeeec;
+  --color-bg-elevated: #e6e5e3;
+  --color-bg-surface: #dddcd9;
+  --color-border: #cccbc8;
+  --color-text-primary: #1a1a19;
+  --color-text-secondary: #555553;
+  --color-text-muted: #8a8987;
+  --color-accent-primary: #d08030;
+  --color-accent-secondary: #4a8a4a;
+  --color-accent-warning: #b09030;
+  --color-accent-danger: #c04040;
+  --color-accent-info: #4080b0;
+}
+
 /* ---- Base ---- */
 
 html,

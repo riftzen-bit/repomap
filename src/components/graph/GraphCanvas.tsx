@@ -23,6 +23,7 @@ export function GraphCanvas() {
   const heatmapData = useGraphStore((s) => s.heatmapData);
   const bookmarks = useGraphStore((s) => s.bookmarks);
   const toggleBookmark = useGraphStore((s) => s.toggleBookmark);
+  const theme = useGraphStore((s) => s.theme);
   const selectNode = useGraphStore((s) => s.selectNode);
 
   const onSelectNode = useCallback(
@@ -43,7 +44,7 @@ export function GraphCanvas() {
     showOnlyConnected,
     resetView,
     setOnContextMenu,
-  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, heatmapMode, heatmapData, bookmarks, onSelectNode);
+  } = useGraph(containerRef, graphData, layout, filters, selectedNodeId, impactMode, clusteringEnabled, heatmapMode, heatmapData, bookmarks, theme, onSelectNode);
 
   const [contextMenu, setContextMenu] = useState<ContextMenuEvent | null>(null);
 

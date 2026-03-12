@@ -5,11 +5,13 @@ import dagre from "cytoscape-dagre";
 import type { GraphData, Filters } from "../../lib/types";
 import {
   buildCytoscapeElements,
+  buildCytoscapeStylesheet,
   cytoscapeStylesheet,
   getLayoutConfig,
   buildCompoundElements,
   assignParents,
 } from "../../lib/cytoscape-config";
+import { getResolvedThemeColors } from "../../lib/theme";
 import { computeClusters } from "../../lib/clustering";
 import { getNodesWithinDepth, getImpactedNodes } from "../../lib/graph-utils";
 import { normalizeFrequencies, interpolateHeatColor } from "../../lib/heatmap";
@@ -57,6 +59,7 @@ export function useGraph(
   heatmapMode: boolean,
   heatmapData: Record<string, number> | null,
   bookmarks: string[],
+  theme: "dark" | "light",
   onSelectNode: (id: string | null) => void,
 ): UseGraphResult {
   const cyRef = useRef<cytoscape.Core | null>(null);
@@ -294,6 +297,21 @@ export function useGraph(
       }
     });
   }, [bookmarks, graphData]);
+
+  // Re-style when theme changes
+  useEffect(() => {
+    const cy = cyRef.current;
+    if (!cy) return;
+
+    // Small delay to let CSS variables update after data-theme change
+    const timer = setTimeout(() => {
+      const colors = getResolvedThemeColors();
+      const stylesheet = buildCytoscapeStylesheet(colors);
+      cy.style().fromJson(stylesheet).update();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [theme]);
 
   const zoomIn = useCallback(() => {
     const cy = cyRef.current;

@@ -505,6 +505,29 @@ describe("impactMode", () => {
   });
 });
 
+describe("theme", () => {
+  it("defaults to 'dark'", () => {
+    expect(useGraphStore.getState().theme).toBe("dark");
+  });
+
+  it("sets theme to 'light'", () => {
+    useGraphStore.getState().setTheme("light");
+    expect(useGraphStore.getState().theme).toBe("light");
+  });
+
+  it("sets theme back to 'dark'", () => {
+    useGraphStore.getState().setTheme("light");
+    useGraphStore.getState().setTheme("dark");
+    expect(useGraphStore.getState().theme).toBe("dark");
+  });
+
+  it("resets theme to 'dark' on full reset", () => {
+    useGraphStore.getState().setTheme("light");
+    useGraphStore.getState().reset();
+    expect(useGraphStore.getState().theme).toBe("dark");
+  });
+});
+
 describe("clusteringEnabled", () => {
   it("defaults to false", () => {
     expect(useGraphStore.getState().clusteringEnabled).toBe(false);

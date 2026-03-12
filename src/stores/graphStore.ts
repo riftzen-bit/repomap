@@ -16,6 +16,7 @@ export interface GraphStore {
   heatmapMode: boolean;
   heatmapData: Record<string, number> | null;
   bookmarks: string[];
+  theme: "dark" | "light";
 
   setGraphData: (data: GraphData, projectRoot: string) => void;
   selectNode: (id: string | null) => void;
@@ -31,6 +32,7 @@ export interface GraphStore {
   setHeatmapData: (data: Record<string, number>) => void;
   toggleBookmark: (nodeId: string) => void;
   clearBookmarks: () => void;
+  setTheme: (theme: "dark" | "light") => void;
   reset: () => void;
 }
 
@@ -54,6 +56,7 @@ const initialState = {
   heatmapMode: false,
   heatmapData: null,
   bookmarks: [] as string[],
+  theme: "dark" as const,
 };
 
 function bookmarkKey(root: string | null): string {
@@ -148,6 +151,8 @@ export const useGraphStore = create<GraphStore>()((set) => ({
       persistBookmarks([], state.projectRoot);
       return { bookmarks: [] };
     }),
+
+  setTheme: (theme) => set({ theme }),
 
   reset: () => set(initialState),
 }));
