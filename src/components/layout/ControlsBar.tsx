@@ -14,6 +14,8 @@ export function ControlsBar() {
   const updateFilters = useGraphStore((s) => s.updateFilters);
   const projectRoot = useGraphStore((s) => s.projectRoot);
   const selectedNodeId = useGraphStore((s) => s.selectedNodeId);
+  const clusteringEnabled = useGraphStore((s) => s.clusteringEnabled);
+  const setClusteringEnabled = useGraphStore((s) => s.setClusteringEnabled);
   const { startScan } = useScanner();
 
   const languages = graphData
@@ -132,6 +134,23 @@ export function ControlsBar() {
           {filters.maxDepth ?? "∞"}
         </span>
       </div>
+
+      {/* Clustering toggle */}
+      {layout === "force" && (
+        <>
+          <div className="h-5 w-px bg-border" />
+          <button
+            onClick={() => setClusteringEnabled(!clusteringEnabled)}
+            className={`rounded border px-2.5 py-1 font-mono text-[10px] transition-all duration-300 ${
+              clusteringEnabled
+                ? "border-accent-primary bg-accent-primary/10 text-accent-primary"
+                : "border-border bg-bg-elevated text-text-muted hover:border-accent-primary hover:text-accent-primary"
+            }`}
+          >
+            Clusters
+          </button>
+        </>
+      )}
 
       {/* Divider */}
       <div className="h-5 w-px bg-border" />
