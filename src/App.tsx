@@ -18,6 +18,9 @@ export function App() {
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
       if (e.ctrlKey && e.key === "o") {
         e.preventDefault();
         open({ directory: true, multiple: false })
