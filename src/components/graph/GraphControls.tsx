@@ -35,8 +35,16 @@ export function GraphControls({
       }
     }
 
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setExportOpen(false);
+    }
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, [exportOpen]);
 
   function handleExport(fn: () => void) {

@@ -7,7 +7,7 @@ export function SearchInput() {
   const graphData = useGraphStore((s) => s.graphData);
   const focusNode = useGraphStore((s) => s.focusNode);
 
-  const [results, setResults] = useState<Array<{ id: string; path: string }>>([]);
+  const [results, setResults] = useState<Array<{ id: string }>>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const search = useCallback(
@@ -25,7 +25,7 @@ export function SearchInput() {
             n.id.toLowerCase().includes(lower),
         )
         .slice(0, 10)
-        .map((n) => ({ id: n.id, path: n.id }));
+        .map((n) => ({ id: n.id }));
       setResults(matches);
       setShowDropdown(matches.length > 0);
     },
@@ -132,7 +132,7 @@ export function SearchInput() {
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
                 <polyline points="14 2 14 8 20 8" />
               </svg>
-              <span className="truncate">{r.path}</span>
+              <span className="truncate">{r.id}</span>
             </button>
           ))}
         </div>

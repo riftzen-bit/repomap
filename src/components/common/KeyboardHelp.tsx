@@ -1,3 +1,5 @@
+import { useEffect, useRef } from "react";
+
 interface KeyboardHelpProps {
   onClose: () => void;
 }
@@ -16,22 +18,36 @@ const shortcuts = [
 ];
 
 export function KeyboardHelp({ onClose }: KeyboardHelpProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    dialogRef.current?.focus();
+  }, []);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       onClick={onClose}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") onClose();
-      }}
     >
       <div className="absolute inset-0 bg-black/60" />
 
       <div
-        className="relative rounded-lg border border-border bg-bg-secondary p-5 shadow-xl"
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="keyboard-help-title"
+        tabIndex={-1}
+        className="relative rounded-lg border border-border bg-bg-secondary p-5 shadow-xl outline-none"
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") onClose();
+        }}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-mono text-sm font-medium text-text-primary">
+          <h2
+            id="keyboard-help-title"
+            className="font-mono text-sm font-medium text-text-primary"
+          >
             Keyboard Shortcuts
           </h2>
           <button
